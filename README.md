@@ -1,59 +1,158 @@
-# Developer Guide (folder-level overview)
+# Machina Frontend Boilerplate
 
-This document focuses on the folder/architecture layout (no component API deep dives).
+This boilerplate is the standardized foundation for all Machina Sports frontends. It incorporates:
+- **Next.js 16** (App Router)
+- **Redux Toolkit** (State management)
+- **Tailwind CSS 4** (Styling)
+- **White Label / Multi-Brand Support** (Configurable theming and content)
+- **Strict TypeScript** & **ESLint** (Code quality)
 
-## Top-level map
-- `app/`: Next.js App Router entrypoints, layouts, route handlers.
-- `components/`: Shared UI and data widgets (Shadcn under `components/ui`, nav/header shells, workflow visualizers, table/form building blocks). Keep feature-specific state out of here.
-- `containers/`: Feature modules (admin/core) bundling Redux slice, thunks, services, schemas, and view components per domain.
-- `providers/`: Runtime wrappers (Session, Data, Navbar, analytics) and domain providers each with `actions.ts`, `reducer.ts`, `service.ts`, optional `schemas.ts`.
-- `store/`: Redux Toolkit setup (`makeStore`, `getStore`, typed hooks). Logging is gated by `NEXT_PUBLIC_WEBAPP_REDUX_LOGS`.
-- `lib/`: Cross-cutting helpers (auth/session validation, telemetry edge hook, logger, date utils).
-- `libs/`: HTTP/client layer (Axios controller/service bases, organization SDK, fonts, generators).
-- `hooks/`: Reusable React hooks not tied to a single feature.
-- `utils/`: Small pure helpers (cookies, proxy helpers, URL encoding, organization tab config).
-- `config/runtime.ts`: Runtime config for template repo paths.
-- Tooling roots: `components.json`, `tailwind.config.ts`, `postcss.config.js`, `.eslintrc.json`, `tsconfig.json` (path alias `@/*` to repo root).
+---
 
-## State & providers
-- Store lives in `store/index.ts`; SSR-safe creation via `getStore`; typed hooks in `store/useState.ts` and `store/dispatch.ts`.
-- Provider chain (`providers/index.tsx`): Redux Provider → PostHogIdentify → SessionProvider → DataProvider → page children. HTML shell wraps analytics/theming (GoogleAnalyticsProvider, PostHogProvider, ThemeProvider, StructuredData).
-- DataProvider: loads projects/docs and performs project health check on `/project/[id]`, redirecting to status when failing.
+## 🤖 AI / Cursor Guide
 
-## Library boundaries (`lib` vs `libs`)
-- `lib/*`: framework-level utilities (session token parsing, logger, OpenTelemetry edge, date/time helpers).
-- `libs/*`: transport/client layer on Axios plus shared assets (fonts) and organization helpers.
+**Role:** You are an expert Machina frontend engineer.
+**Goal:** Maintain consistency, type safety, and the "Machina Standard" across all contributions.
 
-## Directory expectations
-- `components/`: Keep primitives and cross-feature widgets; no feature-specific Redux usage.
-- `containers/<feature>/`: One folder per domain with `actions.ts`, `reducer.ts`, `service.ts`, `schemas.ts`, and view components (`container-*`). Wire reducers in `store/index.ts`.
-- `providers/<domain>/`: Mirrors container pattern but used as runtime context wrappers; same file naming (`actions/reducer/service/schemas`).
-- `app/`: Routes compose providers + containers; avoid business logic in route files.
-- `utils/` and `hooks/`: Keep pure and side-effect free (except hooks that wrap browser APIs).
-- `config/`: Minimal runtime knobs; prefer env vars and typed config objects.
+### Architecture Overview
+1.  **Providers (`providers/`)**:
+    -   Domain-specific logic bundles (e.g., `providers/auth`, `providers/data`).
+    -   Each folder MUST contain: `actions.ts` (Thunks), `reducer.ts` (Slice), `service.ts` (API calls), `provider.tsx` (React Context/Hooks).
+    -   **Rule:** Redux slices are registered in `store/index.ts`. Components consume state via `useAppSelector` and dispatch via `useAppDispatch`.
 
-## Routing shorthand
-- Lists: `/[section]/[resource]`
-- Create: `/[section]/[resource]/new`
-- Detail: `/[section]/[resource]/[id]`
-- Edit: `/[section]/[resource]/[id]/edit`
-- Nested: `/[section]/[resource]/[id]/[subresource]`
+2.  **HTTP Layer (`libs/client/`)**:
+    -   Use `libs/client/base.controller.ts` (Axios wrapper) for all requests.
+    -   Extend `ClientBaseService` in your domain services (e.g., `class MyService extends ClientBaseService`).
+    -   **Rule:** Never use `fetch` or raw `axios` directly in components.
 
-## Framework baseline vs target
-- Current project: Next.js `14.2.26`, React 18, Tailwind 3.4, TypeScript 5.
-- Target for new boilerplates: Next.js `16.0.7` (secure baseline) with expected React 19; revalidate Radix/Shadcn and ESLint/TS configs when upgrading.
+3.  **Components (`components/`)**:
+    -   **Shared UI**: `components/ui` (Shadcn-like primitives).
+    -   **Features**: Feature-specific UI goes in `components/<feature>`.
+    -   **Rule:** Components should be presentational. Logic belongs in Providers/Redux.
 
-## Boilerplate blueprint (git-clone-and-go)
-- Layout: `app/`, `components/ui|data-*`, `containers/`, `providers/`, `store/`, `lib/`, `libs/`, `hooks/`, `utils/`, `config/`.
-- State: ship `store/index.ts`, `dispatch.ts`, `useState.ts`, sample slice; SSR-safe store and dev-only logger flag.
-- Providers: include `BaseProviders` and `HtmlLayout` equivalents with theme + analytics toggles via env; scaffold `SessionProvider` and `DataProvider`.
-- HTTP layer: Axios base controller with session cookie injection + error handling; base service classes; prefix conventions documented.
-- Tooling: ESLint (Next + TS), Prettier/Tailwind plugin, `next lint`, GitHub Actions for build/test/lint, optional Husky + lint-staged.
-- DX: `components.json`/Shadcn setup, Tailwind/PostCSS configs, `.env.example` covering session cookie, analytics keys, API base. Include README explaining folder boundaries and extension points.
+4.  **Configuration (`config/`)**:
+    -   **Brands**: `config/brands` defines per-brand tokens (colors, text, assets).
+    -   **Runtime**: `config/runtime.ts` for env vars.
 
-## Prerequisites
-- Node.js (LTS), npm or yarn, Git
+### Coding Standards
+-   **Strict Types**: No `any`. Define interfaces for all API responses and Props.
+-   **Server vs Client**: Use `"use client"` only when necessary (interactive hooks). Prefer Server Components for fetching initial data where possible, but this boilerplate favors Client-side Redux for complex state.
+-   **Styling**: Tailwind utility classes. Use `className` prop for overrides.
+-   **Localization**: All text must be in **English**.
 
+---
 
-# Get Help
-- If you find any issues, please mail me: mateus.pinheiro@machina.gg
+## 🚀 Developer Guide
+
+### Prerequisites
+- Node.js (LTS)
+- npm or yarn
+
+### Quick Start
+
+1.  **Clone & Install**:
+    ```bash
+    git clone <repo-url>
+    npm install
+    ```
+
+2.  **Environment Setup**:
+    Create `.env.local`:
+    ```env
+    # Brand Configuration (default, sportingbet, bwin)
+    NEXT_PUBLIC_BRAND=default
+
+    # API Configuration
+    NEXT_PUBLIC_API_BASE_URL=http://localhost:3000/api
+    MACHINA_API_KEY=your_key
+    MACHINA_CLIENT_URL=your_url
+    ```
+
+3.  **Run Development**:
+    ```bash
+    npm run dev
+    # or with specific brand
+    NEXT_PUBLIC_BRAND=sportingbet npm run dev
+    ```
+
+### Project Structure
+
+```
+├── app/                  # Next.js App Router (Routes & Layouts)
+│   ├── api/              # Route Handlers (BFF pattern)
+│   ├── layout.tsx        # Root layout with Providers
+│   └── page.tsx          # Home page
+├── components/           # React Components
+│   ├── ui/               # Reusable primitives
+│   └── ...               # Feature components
+├── config/               # Configuration (Brands, Runtime)
+├── providers/            # Domain Logic (Redux + Context)
+│   └── <domain>/         # e.g., session, data
+│       ├── actions.ts    # Redux Thunks
+│       ├── reducer.ts    # Redux Slice
+│       ├── service.ts    # API Service
+│       └── provider.tsx  # React Provider
+├── libs/                 # Library Code
+│   └── client/           # HTTP Client Base
+├── store/                # Redux Store Configuration
+└── public/               # Static Assets
+```
+
+### Adding a New Feature
+1.  **Create Provider**: Add `providers/<feature>/` with actions, reducer, service.
+2.  **Register Reducer**: Add the new reducer to `store/index.ts`.
+3.  **Wrap App**: Add the provider to `providers/provider.tsx` (if global) or specific route layout.
+4.  **Create UI**: Build components in `components/<feature>` using the state.
+
+### HTTP Requests (BFF Pattern)
+We use Next.js Route Handlers (`app/api/...`) as a BFF (Backend for Frontend) to proxy requests to backend services, handling authentication and secrets securely.
+
+**Example: `app/api/article/route.ts`**
+```typescript
+import { NextResponse, NextRequest } from "next/server";
+
+export async function GET(req: NextRequest) {
+  const searchParams = req.nextUrl.searchParams;
+  const id = searchParams.get("id");
+  const api_url = process.env.MACHINA_CLIENT_URL;
+  const bearer = process.env.MACHINA_API_KEY;
+
+  if (!id) {
+    return NextResponse.json({ error: "ID required" }, { status: 400 });
+  }
+
+  try {
+    const response = await fetch(`${api_url}/document/search`, {
+      method: "POST",
+      headers: {
+        "X-Api-Token": `${bearer}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ filters: { "_id": id } }),
+    });
+
+    const data = await response.json();
+    return NextResponse.json(data);
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 500 });
+  }
+}
+```
+
+---
+
+## 🎨 Branding & White Label
+The app supports multi-brand deployment via `NEXT_PUBLIC_BRAND`.
+-   **Config**: `config/brands/index.ts`
+-   **Usage**: `useBrand()` hook or `BrandProvider`.
+-   **CSS**: CSS variables are injected automatically based on the selected brand.
+
+---
+
+## 🤝 Contributing
+1.  Fork & Branch (`feat/my-feature`).
+2.  Commit with semantic messages.
+3.  Open PR.
+
+## 📞 Support
+Contact: mateus.pinheiro@machina.gg
