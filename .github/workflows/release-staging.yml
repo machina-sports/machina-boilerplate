@@ -1,0 +1,42 @@
+name: Release Staging
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Image tag to deploy (e.g., v.staging-1.0.0)'
+        required: true
+        type: string
+
+env:
+  AKS_CLUSTER_NAME: mks-community-cluster
+  AKS_RESOURCE_GROUP: mks-community-group
+  NAMESPACE: default # Change this to your target namespace
+  APP_NAME: machina-frontend-boilerplate
+  DEPLOYMENT_NAME: machina-frontend-boilerplate
+  CONTAINER_NAME: machina-frontend-boilerplate
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set image tag
+        run: echo "IMAGE_TAG=${{ github.event.inputs.image_tag }}" >> $GITHUB_ENV
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Get AKS credentials
+        uses: azure/aks-set-context@v3
+        with:
+          cluster-name: ${{ env.AKS_CLUSTER_NAME }}
+          resource-group: ${{ env.AKS_RESOURCE_GROUP }}
+
+      - name: Deploy to AKS
+        run: |
+          kubectl set image deployment/${{ env.DEPLOYMENT_NAME }} ${{ env.CONTAINER_NAME }}=${{ secrets.REGISTRY_URL }}/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }} -n ${{ env.NAMESPACE }}
+          kubectl rollout status deployment/${{ env.DEPLOYMENT_NAME }} -n ${{ env.NAMESPACE }}
+
