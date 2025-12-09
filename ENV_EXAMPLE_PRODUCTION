@@ -1,0 +1,12 @@
+# Production Environment Variables
+# Create a .env.production file with these values before running docker build
+
+# Client-side variables (Available in browser)
+NEXT_PUBLIC_BRAND=default
+NEXT_PUBLIC_APP_NAME="Machina Frontend"
+NEXT_PUBLIC_API_BASE_URL="http://localhost:3000/api"
+
+# Server-side variables (Only available on server/build time)
+MACHINA_CLIENT_URL=
+MACHINA_API_KEY=
+
