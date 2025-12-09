@@ -1,13 +1,24 @@
 'use client';
 
 import Image from 'next/image';
-import { Copy, Server, Type, Zap, ShieldCheck } from 'lucide-react';
+import { Copy, Server, Type, Zap, ShieldCheck, Check } from 'lucide-react';
+import { useState } from 'react';
 import { TipCard } from './components/tips/TipCard';
 import { ClientServerVisual } from './components/tips/ClientServerVisual';
 import { ComponentStructureVisual } from './components/tips/ComponentStructureVisual';
 import { ArchitectureVisual } from './components/tips/ArchitectureVisual';
 
 const TipsPage = () => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    const gitCloneCommand = 'git clone git@github.com:machina-sports/machina-frontend-boilerplate.git';
+    navigator.clipboard.writeText(gitCloneCommand).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-start gap-10 bg-zinc-50 px-6 py-16 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50">
       
@@ -27,6 +38,31 @@ const TipsPage = () => {
           <p className="text-zinc-500 dark:text-zinc-400 text-lg">
             Best practices and guidelines for a better development experience.
           </p>
+          
+          {/* Git Clone Button */}
+          <div className="pt-4 flex justify-center">
+            <button
+              onClick={handleCopy}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                copied
+                  ? 'bg-green-500 dark:bg-green-600 text-white'
+                  : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 hover:bg-zinc-300 dark:hover:bg-zinc-700'
+              }`}
+            >
+              {copied ? (
+                <>
+                  <Check size={16} />
+                  Copied!
+                </>
+              ) : (
+                <>
+                  <Copy size={16} />
+                  Copy git clone command
+                </>
+              )}
+            </button>
+          </div>
+
           <div className="pt-2">
             <a href="/redux-demo" className="text-sm text-blue-500 hover:underline">
                Check Redux Demo Page
