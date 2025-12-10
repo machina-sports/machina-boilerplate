@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { dracula } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { Check, Copy } from 'lucide-react';
 
 interface CodeBlockProps {
@@ -31,26 +33,32 @@ export function CodeBlock({ children, className }: CodeBlockProps) {
   };
 
   return (
-    <div className="relative group rounded-lg overflow-hidden my-4 border border-zinc-200 dark:border-zinc-800 bg-zinc-950">
-      <div className="flex items-center justify-between px-4 py-2 bg-zinc-900 border-b border-zinc-800">
-        <span className="text-xs font-mono text-zinc-400 uppercase">
+    <div className="relative group rounded-lg overflow-hidden my-4 border border-[#44475a] bg-[#282a36] shadow-lg">
+      <div className="flex items-center justify-between px-4 py-2 bg-[#21222c] border-b border-[#44475a]">
+        <span className="text-xs font-mono text-[#bd93f9] uppercase tracking-wider">
           {language}
         </span>
         <button
           onClick={handleCopy}
-          className="p-1 rounded hover:bg-zinc-800 transition-colors text-zinc-400 hover:text-zinc-100"
+          className="p-1.5 rounded hover:bg-[#44475a] transition-colors text-[#6272a4] hover:text-[#8be9fd]"
           aria-label="Copy code"
         >
           {copied ? <Check size={14} /> : <Copy size={14} />}
         </button>
       </div>
       
-      <div className="p-4 overflow-x-auto bg-zinc-950">
-        <pre className="m-0 p-0 bg-transparent font-inherit">
-          <code className={`text-sm font-mono text-zinc-50 ${className || ''}`}>
-            {children}
-          </code>
-        </pre>
+      <div className="overflow-x-auto bg-[#282a36]">
+        <SyntaxHighlighter 
+          language={language} 
+          style={dracula}
+          customStyle={{
+            margin: 0,
+            padding: '1rem',
+            background: '#282a36',
+          }}
+        >
+          {textContent}
+        </SyntaxHighlighter>
       </div>
     </div>
   );

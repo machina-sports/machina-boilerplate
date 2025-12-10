@@ -52,7 +52,15 @@ This boilerplate is the standardized foundation for all Machina Sports frontends
    npm install
    ```
 
-2. **Environment Setup**:
+2. **Prepare for Production** (Optional):
+   Remove example files and dependencies:
+   ```bash
+   npm run prepare:production
+   npm install  # Update dependencies
+   ```
+   > 💡 This will ignore example pages (`/docs`, `/redux-demo`), example components, and optional dependencies. See `scripts/README.md` for details.
+
+3. **Environment Setup**:
    Create `.env.local`:
    ```env
    # Brand Configuration (default, sportingbet, bwin)
@@ -64,7 +72,7 @@ This boilerplate is the standardized foundation for all Machina Sports frontends
    MACHINA_CLIENT_URL=your_url
    ```
 
-3. **Run Development**:
+4. **Run Development**:
    ```bash
    npm run dev
    # or with specific brand
@@ -136,6 +144,46 @@ export async function GET(req: NextRequest) {
   }
 }
 ```
+
+---
+
+## 🧹 Preparing for Production
+
+This boilerplate includes example files and optional dependencies that you may want to remove when starting a new project.
+
+### Quick Setup
+
+After cloning and installing dependencies, run:
+
+```bash
+npm run prepare:production
+npm install  # Update dependencies after removing optional packages
+```
+
+This will:
+- ✅ Add example files to `.gitignore` (won't be committed)
+- ✅ Remove optional dependencies from `package.json`:
+  - `react-markdown` (used for docs page)
+  - `react-syntax-highlighter` (used for code highlighting)
+  - `@types/react-syntax-highlighter`
+
+**Example files that will be ignored:**
+- `app/page.tsx` (example home page)
+- `app/docs/` (documentation page)
+- `app/redux-demo/` (Redux demo page)
+- `app/components/` (example components)
+- `README.md` (this file)
+
+### Restore Development Mode
+
+To restore example files and dependencies (useful when contributing to the boilerplate):
+
+```bash
+npm run prepare:development
+npm install  # Restore dependencies
+```
+
+For more details, see [`scripts/README.md`](scripts/README.md).
 
 ---
 
