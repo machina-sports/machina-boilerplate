@@ -15,30 +15,26 @@ This boilerplate is the standardized foundation for all Machina Sports frontends
 **Goal:** Maintain consistency, type safety, and the "Machina Standard" across all contributions.
 
 ### Architecture Overview
-1.  **Providers (`providers/`)**:
-    -   Domain-specific logic bundles (e.g., `providers/auth`, `providers/data`).
-    -   Each folder MUST contain: `actions.ts` (Thunks), `reducer.ts` (Slice), `service.ts` (API calls), `provider.tsx` (React Context/Hooks).
-    -   **Rule:** Redux slices are registered in `store/index.ts`. Components consume state via `useAppSelector` and dispatch via `useAppDispatch`.
 
-2.  **HTTP Layer (`libs/client/`)**:
-    -   Use `libs/client/base.controller.ts` (Axios wrapper) for all requests.
-    -   Extend `ClientBaseService` in your domain services (e.g., `class MyService extends ClientBaseService`).
-    -   **Rule:** Never use `fetch` or raw `axios` directly in components.
+1. **Providers (`providers/`)**: Domain-specific logic bundles (e.g., `providers/auth`, `providers/data`).
+   - Each folder MUST contain: `actions.ts` (Thunks), `reducer.ts` (Slice), `service.ts` (API calls), `provider.tsx` (React Context/Hooks).
+   - **Rule:** Redux slices are registered in `store/index.ts`. Components consume state via `useAppSelector` and dispatch via `useAppDispatch`.
 
-3.  **Components (`components/`)**:
-    -   **Shared UI**: `components/ui` (Shadcn-like primitives).
-    -   **Features**: Feature-specific UI goes in `components/<feature>`.
-    -   **Rule:** Components should be presentational. Logic belongs in Providers/Redux.
+2. **HTTP Layer (`libs/client/`)**: Use `libs/client/base.controller.ts` (Axios wrapper) for all requests.
+   - Extend `ClientBaseService` in your domain services (e.g., `class MyService extends ClientBaseService`).
+   - **Rule:** Never use `fetch` or raw `axios` directly in components.
 
-4.  **Configuration (`config/`)**:
-    -   **Brands**: `config/brands` defines per-brand tokens (colors, text, assets).
-    -   **Runtime**: `config/runtime.ts` for env vars.
+3. **Components (`components/`)**: **Shared UI**: `components/ui` (Shadcn-like primitives). **Features**: Feature-specific UI goes in `components/<feature>`.
+   - **Rule:** Components should be presentational. Logic belongs in Providers/Redux.
+
+4. **Configuration (`config/`)**: **Brands**: `config/brands` defines per-brand tokens (colors, text, assets). **Runtime**: `config/runtime.ts` for env vars.
 
 ### Coding Standards
--   **Strict Types**: No `any`. Define interfaces for all API responses and Props.
--   **Server vs Client**: Use `"use client"` only when necessary (interactive hooks). Prefer Server Components for fetching initial data where possible, but this boilerplate favors Client-side Redux for complex state.
--   **Styling**: Tailwind utility classes. Use `className` prop for overrides.
--   **Localization**: All text must be in **English**.
+
+- **Strict Types**: No `any`. Define interfaces for all API responses and Props.
+- **Server vs Client**: Use `"use client"` only when necessary (interactive hooks). Prefer Server Components for fetching initial data where possible, but this boilerplate favors Client-side Redux for complex state.
+- **Styling**: Tailwind utility classes. Use `className` prop for overrides.
+- **Localization**: All text must be in **English**.
 
 ---
 
@@ -50,30 +46,30 @@ This boilerplate is the standardized foundation for all Machina Sports frontends
 
 ### Quick Start
 
-1.  **Clone & Install**:
-    ```bash
-    git clone <repo-url>
-    npm install
-    ```
+1. **Clone & Install**:
+   ```bash
+   git clone <repo-url>
+   npm install
+   ```
 
-2.  **Environment Setup**:
-    Create `.env.local`:
-    ```env
-    # Brand Configuration (default, sportingbet, bwin)
-    NEXT_PUBLIC_BRAND=default
+2. **Environment Setup**:
+   Create `.env.local`:
+   ```env
+   # Brand Configuration (default, sportingbet, bwin)
+   NEXT_PUBLIC_BRAND=default
 
-    # API Configuration
-    NEXT_PUBLIC_API_BASE_URL=http://localhost:3000/api
-    MACHINA_API_KEY=your_key
-    MACHINA_CLIENT_URL=your_url
-    ```
+   # API Configuration
+   NEXT_PUBLIC_API_BASE_URL=http://localhost:3000/api
+   MACHINA_API_KEY=your_key
+   MACHINA_CLIENT_URL=your_url
+   ```
 
-3.  **Run Development**:
-    ```bash
-    npm run dev
-    # or with specific brand
-    NEXT_PUBLIC_BRAND=sportingbet npm run dev
-    ```
+3. **Run Development**:
+   ```bash
+   npm run dev
+   # or with specific brand
+   NEXT_PUBLIC_BRAND=sportingbet npm run dev
+   ```
 
 ### Project Structure
 
@@ -99,12 +95,14 @@ This boilerplate is the standardized foundation for all Machina Sports frontends
 ```
 
 ### Adding a New Feature
-1.  **Create Provider**: Add `providers/<feature>/` with actions, reducer, service.
-2.  **Register Reducer**: Add the new reducer to `store/index.ts`.
-3.  **Wrap App**: Add the provider to `providers/provider.tsx` (if global) or specific route layout.
-4.  **Create UI**: Build components in `components/<feature>` using the state.
+
+1. **Create Provider**: Add `providers/<feature>/` with actions, reducer, service.
+2. **Register Reducer**: Add the new reducer to `store/index.ts`.
+3. **Wrap App**: Add the provider to `providers/provider.tsx` (if global) or specific route layout.
+4. **Create UI**: Build components in `components/<feature>` using the state.
 
 ### HTTP Requests (BFF Pattern)
+
 We use Next.js Route Handlers (`app/api/...`) as a BFF (Backend for Frontend) to proxy requests to backend services, handling authentication and secrets securely.
 
 **Example: `app/api/article/route.ts`**
@@ -142,17 +140,21 @@ export async function GET(req: NextRequest) {
 ---
 
 ## 🎨 Branding & White Label
+
 The app supports multi-brand deployment via `NEXT_PUBLIC_BRAND`.
--   **Config**: `config/brands/index.ts`
--   **Usage**: `useBrand()` hook or `BrandProvider`.
--   **CSS**: CSS variables are injected automatically based on the selected brand.
+
+- **Config**: `config/brands/index.ts`
+- **Usage**: `useBrand()` hook or `BrandProvider`.
+- **CSS**: CSS variables are injected automatically based on the selected brand.
 
 ---
 
 ## 🤝 Contributing
-1.  Fork & Branch (`feat/my-feature`).
-2.  Commit with semantic messages.
-3.  Open PR.
+
+1. Fork & Branch (`feat/my-feature`).
+2. Commit with semantic messages.
+3. Open PR.
 
 ## 📞 Support
+
 Contact: mateus.pinheiro@machina.gg
