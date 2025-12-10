@@ -63,9 +63,12 @@ const TipsPage = () => {
             </button>
           </div>
 
-          <div className="pt-2">
+          <div className="pt-2 flex flex-col gap-2 items-center">
             <a href="/redux-demo" className="text-sm text-blue-500 hover:underline">
                Check Redux Demo Page
+            </a>
+            <a href="/docs" className="text-sm text-blue-500 hover:underline">
+               Read Full Documentation
             </a>
           </div>
         </div>
