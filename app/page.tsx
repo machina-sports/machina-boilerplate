@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { Copy, Server, Type, Zap, ShieldCheck, Check } from 'lucide-react';
+import { Copy, Server, Type, Zap, ShieldCheck, Check, Settings } from 'lucide-react';
 import { useState } from 'react';
 import { TipCard } from './components/tips/TipCard';
 import { ClientServerVisual } from './components/tips/ClientServerVisual';
@@ -143,7 +143,7 @@ const TipsPage = () => {
           </div>
         </TipCard>
 
-        {/* Tip 4: Performance & Hooks */}
+        {/* Tip 5: Performance & Hooks */}
         <TipCard
           title="Performance & Hooks"
           description="Use React Hooks and modern patterns to keep the application fluid and performant."
@@ -163,6 +163,41 @@ const TipsPage = () => {
                <span>Keep effects (<code>useEffect</code>) simple and focused.</span>
              </li>
            </ul>
+        </TipCard>
+
+        {/* Tip 6: Prepare for Production */}
+        <TipCard
+          title="Prepare for Production"
+          description="Remove example files and optional dependencies when starting your project."
+          icon={<Settings size={20} />}
+          className="md:col-span-2"
+        >
+          <div className="p-4 bg-zinc-100 dark:bg-zinc-900 rounded-lg space-y-4">
+            <div className="space-y-3">
+              <p className="text-sm text-zinc-700 dark:text-zinc-300 font-medium">
+                After cloning and installing dependencies, prepare your project:
+              </p>
+              <div className="bg-zinc-50 dark:bg-zinc-800 p-3 rounded-md">
+                <code className="text-sm text-zinc-800 dark:text-zinc-200 block">
+                  npm run prepare:production<br/>
+                  npm install
+                </code>
+              </div>
+              <div className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
+                <p><strong>This will:</strong></p>
+                <ul className="list-disc list-inside ml-2 space-y-1">
+                  <li>Add example files to <code>.gitignore</code></li>
+                  <li>Remove optional dependencies (<code>react-markdown</code>, <code>react-syntax-highlighter</code>)</li>
+                  <li>Clean up example pages (<code>/docs</code>, <code>/redux-demo</code>)</li>
+                </ul>
+              </div>
+              <div className="pt-2 border-t border-zinc-200 dark:border-zinc-700">
+                <p className="text-xs text-zinc-500 dark:text-zinc-500">
+                  💡 To restore examples: <code className="text-xs">npm run prepare:development</code>
+                </p>
+              </div>
+            </div>
+          </div>
         </TipCard>
 
       </div>
