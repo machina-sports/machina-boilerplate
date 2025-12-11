@@ -1,6 +1,7 @@
 # Machina Frontend Boilerplate
 
 This boilerplate is the standardized foundation for all Machina Sports frontends. It incorporates:
+
 - **Next.js 16** (App Router)
 - **Redux Toolkit** (State management)
 - **Tailwind CSS 4** (Styling)
@@ -41,12 +42,14 @@ This boilerplate is the standardized foundation for all Machina Sports frontends
 ## 🚀 Developer Guide
 
 ### Prerequisites
+
 - Node.js (LTS)
 - npm or yarn
 
 ### Quick Start
 
 1. **Clone & Install**:
+
    ```bash
    git clone <repo-url>
    npm install
@@ -54,14 +57,17 @@ This boilerplate is the standardized foundation for all Machina Sports frontends
 
 2. **Prepare for Production** (Optional):
    Remove example files and dependencies:
+
    ```bash
    npm run prepare:production
    npm install  # Update dependencies
    ```
+
    > 💡 This will ignore example pages (`/docs`, `/redux-demo`), example components, and optional dependencies. See `scripts/README.md` for details.
 
 3. **Environment Setup**:
    Create `.env.local`:
+
    ```env
    # Brand Configuration (default, sportingbet, bwin)
    NEXT_PUBLIC_BRAND=default
@@ -114,27 +120,28 @@ This boilerplate is the standardized foundation for all Machina Sports frontends
 We use Next.js Route Handlers (`app/api/...`) as a BFF (Backend for Frontend) to proxy requests to backend services, handling authentication and secrets securely.
 
 **Example: `app/api/article/route.ts`**
+
 ```typescript
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse, NextRequest } from 'next/server';
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
-  const id = searchParams.get("id");
+  const id = searchParams.get('id');
   const api_url = process.env.MACHINA_CLIENT_URL;
   const bearer = process.env.MACHINA_API_KEY;
 
   if (!id) {
-    return NextResponse.json({ error: "ID required" }, { status: 400 });
+    return NextResponse.json({ error: 'ID required' }, { status: 400 });
   }
 
   try {
     const response = await fetch(`${api_url}/document/search`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "X-Api-Token": `${bearer}`,
-        "Content-Type": "application/json",
+        'X-Api-Token': `${bearer}`,
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ filters: { "_id": id } }),
+      body: JSON.stringify({ filters: { _id: id } }),
     });
 
     const data = await response.json();
@@ -161,6 +168,7 @@ npm install  # Update dependencies after removing optional packages
 ```
 
 This will:
+
 - ✅ Add example files to `.gitignore` (won't be committed)
 - ✅ Remove optional dependencies from `package.json`:
   - `react-markdown` (used for docs page)
@@ -168,6 +176,7 @@ This will:
   - `@types/react-syntax-highlighter`
 
 **Example files that will be ignored:**
+
 - `app/page.tsx` (example home page)
 - `app/docs/` (documentation page)
 - `app/redux-demo/` (Redux demo page)
@@ -194,6 +203,38 @@ The app supports multi-brand deployment via `NEXT_PUBLIC_BRAND`.
 - **Config**: `config/brands/index.ts`
 - **Usage**: `useBrand()` hook or `BrandProvider`.
 - **CSS**: CSS variables are injected automatically based on the selected brand.
+
+---
+
+## 🚀 Deployment
+
+This boilerplate includes GitHub Actions workflows for automated CI/CD to Azure Kubernetes Service (AKS).
+
+### Quick Overview
+
+1. **Build Workflow** (`.github/workflows/build-staging.yml`): Automatically builds and pushes Docker images when a staging tag is pushed.
+2. **Release Workflow** (`.github/workflows/release-staging.yml`): Manually deploys a specific image tag to Kubernetes.
+
+### Setup Steps
+
+1. **Customize Workflows**: Edit both workflow files and replace `app-name` with your application name. Update cluster and resource group names.
+2. **Configure GitHub Secrets**: Add required secrets and variables in GitHub Settings → Secrets and variables → Actions.
+3. **Setup Kubernetes**: Create registry secret and apply Kubernetes manifests from `k8s/` directory.
+4. **Deploy**: Create a staging tag (`v.staging-*`) to trigger build, then manually trigger release workflow.
+
+### Detailed Guide
+
+For complete deployment instructions, see the [Deployment Guide](/deploy) page or check the example workflows in `.github/workflows/`.
+
+**Required GitHub Secrets:**
+
+- `DOCKER_USERNAME`, `DOCKER_PASSWORD`, `REGISTRY_URL`
+- `AZURE_CREDENTIALS`
+
+**Required GitHub Variables:**
+
+- `MACHINA_API_KEY`, `MACHINA_CLIENT_URL`
+- `NEXT_PUBLIC_BRAND`, `NEXT_PUBLIC_APP_NAME`, `NEXT_PUBLIC_API_BASE_URL`
 
 ---
 

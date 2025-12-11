@@ -21,43 +21,42 @@ export type BrandConfig = {
 
 const brands: Record<string, BrandConfig> = {
   default: {
-    id: "default",
-    language: "en-US",
+    id: 'default',
+    language: 'en-US',
     content: {
-      title: "Machina Frontend",
-      description: "Next.js + Redux + Tailwind boilerplate for new projects.",
-      favicon: "/favicon.ico",
-      ogImage: "/og-image.png",
+      title: 'Machina Boilerplate Frontend',
+      description: 'Next.js + Redux + Tailwind boilerplate for new projects.',
+      favicon: '/favicon.ico',
+      ogImage: '/og-image.png',
     },
     colors: {
-      primary: "207 95% 41%",
-      secondary: "207 95% 50%",
-      background: "0 0% 7%",
-      foreground: "0 0% 100%",
+      primary: '207 95% 41%',
+      secondary: '207 95% 50%',
+      background: '0 0% 7%',
+      foreground: '0 0% 100%',
     },
   },
   sportingbet: {
-    id: "sportingbet",
-    language: "en-US",
+    id: 'sportingbet',
+    language: 'en-US',
     content: {
-      title: "Sportingbet Companion",
-      description: "Assistive experience with content, odds, and recommendations.",
-      favicon: "/favicon.ico",
-      ogImage: "/og-image.png",
+      title: 'Sportingbet Companion',
+      description: 'Assistive experience with content, odds, and recommendations.',
+      favicon: '/favicon.ico',
+      ogImage: '/og-image.png',
     },
     colors: {
-      primary: "207 95% 41%",
-      secondary: "207 95% 50%",
-      background: "220 100% 8%",
-      foreground: "0 0% 100%",
+      primary: '207 95% 41%',
+      secondary: '207 95% 50%',
+      background: '220 100% 8%',
+      foreground: '0 0% 100%',
     },
   },
 };
 
 export const getBrandConfig = (brandId?: string) => {
-  const key = brandId ?? process.env.NEXT_PUBLIC_BRAND ?? "default";
+  const key = brandId ?? process.env.NEXT_PUBLIC_BRAND ?? 'default';
   return brands[key] ?? brands.default;
 };
 
 export const brandList = Object.values(brands);
-

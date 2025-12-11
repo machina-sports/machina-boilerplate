@@ -1,8 +1,8 @@
-import type { Metadata, Viewport } from "next";
-import type { BrandConfig } from "@/config/brands";
+import type { Metadata, Viewport } from 'next';
+import type { BrandConfig } from '@/config/brands';
 
 export const generateBrandMetadata = (
-  brand: BrandConfig,
+  brand: BrandConfig
 ): { metadata: Metadata; viewport: Viewport } => {
   const metadata: Metadata = {
     title: brand.content.title,
@@ -23,4 +23,3 @@ export const generateBrandMetadata = (
 
   return { metadata, viewport };
 };
-

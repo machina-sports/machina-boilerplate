@@ -1,7 +1,7 @@
-import api from "@/libs/client/base.controller";
+import api from '@/libs/client/base.controller';
 
 class ClientBaseService {
-  prefix = "";
+  prefix = '';
   api = api;
 
   get(prefix = this.prefix, options: unknown) {
@@ -26,4 +26,3 @@ class ClientBaseService {
 }
 
 export default ClientBaseService;
-

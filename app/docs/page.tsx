@@ -11,14 +11,13 @@ async function DocsPage() {
 
   return (
     <main className="flex min-h-screen flex-col items-start justify-start gap-8 bg-zinc-50 dark:bg-zinc-950">
-      
       {/* Sticky Header */}
-      <div className="sticky top-0 z-40 w-full bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 shadow-sm">
-        <div className="max-w-4xl mx-auto px-6 py-4">
+      <div className="sticky top-0 z-40 w-full border-b border-zinc-200 bg-white/80 shadow-sm backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-900/80">
+        <div className="mx-auto max-w-4xl px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link href="/">
-              <Image
+                <Image
                   src="/logo-grey.webp"
                   alt="Machina Sports logo"
                   width={0}
@@ -27,7 +26,9 @@ async function DocsPage() {
                   className="h-8 w-auto md:h-10"
                 />
               </Link>
-              <h1 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">Documentation</h1>
+              <h1 className="text-xl font-bold tracking-tight text-zinc-900 md:text-2xl dark:text-zinc-50">
+                Documentation
+              </h1>
             </div>
             <DocsClient />
           </div>
@@ -35,133 +36,124 @@ async function DocsPage() {
       </div>
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto px-6 py-8 w-full">
-        <article className="prose prose-zinc dark:prose-invert max-w-none pb-20 docs-markdown">
+      <div className="mx-auto w-full max-w-4xl px-6 py-8">
+        <article className="prose prose-zinc dark:prose-invert docs-markdown max-w-none pb-20">
           <ReactMarkdown
             components={{
               // Headings
-              h1: ({children}) => (
-                <h1 className="text-4xl font-extrabold mt-12 mb-6 text-zinc-900 dark:text-zinc-50 tracking-tight">
+              h1: ({ children }) => (
+                <h1 className="mt-12 mb-6 text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
                   {children}
                 </h1>
               ),
-              h2: ({children}) => (
-                <h2 className="text-3xl font-bold mt-10 mb-5 text-zinc-900 dark:text-zinc-50 border-b border-zinc-200 dark:border-zinc-800 pb-3">
+              h2: ({ children }) => (
+                <h2 className="mt-10 mb-5 border-b border-zinc-200 pb-3 text-3xl font-bold text-zinc-900 dark:border-zinc-800 dark:text-zinc-50">
                   {children}
                 </h2>
               ),
-              h3: ({children}) => (
-                <h3 className="text-2xl font-bold mt-8 mb-4 text-zinc-900 dark:text-zinc-100">
+              h3: ({ children }) => (
+                <h3 className="mt-8 mb-4 text-2xl font-bold text-zinc-900 dark:text-zinc-100">
                   {children}
                 </h3>
               ),
-              h4: ({children}) => (
-                <h4 className="text-xl font-semibold mt-6 mb-3 text-zinc-900 dark:text-zinc-200">
+              h4: ({ children }) => (
+                <h4 className="mt-6 mb-3 text-xl font-semibold text-zinc-900 dark:text-zinc-200">
                   {children}
                 </h4>
               ),
-              
+
               // Paragraphs and text
-              p: ({children}) => (
-                <p className="text-base leading-7 mb-5 text-zinc-600 dark:text-zinc-300">
+              p: ({ children }) => (
+                <p className="mb-5 text-base leading-7 text-zinc-600 dark:text-zinc-300">
                   {children}
                 </p>
               ),
-              
+
               // Lists
-              ul: ({children}) => (
-                <ul className="list-disc list-inside mb-6 space-y-2 text-zinc-600 dark:text-zinc-300 ml-4">
+              ul: ({ children }) => (
+                <ul className="mb-6 ml-4 list-inside list-disc space-y-2 text-zinc-600 dark:text-zinc-300">
                   {children}
                 </ul>
               ),
-              ol: ({children}) => (
-                <ol className="list-decimal list-inside mb-6 space-y-2 text-zinc-600 dark:text-zinc-300 ml-4 [&>li>p:first-child]:inline [&>li>p:first-child]:mb-0">
+              ol: ({ children }) => (
+                <ol className="mb-6 ml-4 list-inside list-decimal space-y-2 text-zinc-600 dark:text-zinc-300 [&>li>p:first-child]:mb-0 [&>li>p:first-child]:inline">
                   {children}
                 </ol>
               ),
-              li: ({children}) => (
-                <li className="pl-1 text-zinc-600 dark:text-zinc-300">
-                  {children}
-                </li>
+              li: ({ children }) => (
+                <li className="pl-1 text-zinc-600 dark:text-zinc-300">{children}</li>
               ),
-              
+
               // Code blocks - Handled via code component + pre override
-              pre: ({children}) => <>{children}</>,
-              code: ({className, children, ...props}: any) => {
+              pre: ({ children }) => <>{children}</>,
+              code: ({ className, children, ...props }: React.HTMLAttributes<HTMLElement>) => {
                 const isInline = !className && !String(children).includes('\n');
-                
+
                 if (isInline) {
                   return (
-                    <code className="bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded-md text-sm font-mono text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700/50" {...props}>
+                    <code
+                      className="rounded-md border border-zinc-200 bg-zinc-100 px-1.5 py-0.5 font-mono text-sm text-zinc-800 dark:border-zinc-700/50 dark:bg-zinc-800 dark:text-zinc-200"
+                      {...props}
+                    >
                       {children}
                     </code>
                   );
                 }
 
-                return (
-                  <CodeBlock className={className}>
-                    {children}
-                  </CodeBlock>
-                );
+                return <CodeBlock className={className}>{children}</CodeBlock>;
               },
-              
+
               // Links
-              a: ({href, children}) => (
+              a: ({ href, children }) => (
                 <a
                   href={href}
-                  className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 underline underline-offset-4 decoration-blue-300 dark:decoration-blue-700/50 hover:decoration-blue-500 transition-colors"
+                  className="font-medium text-blue-600 underline decoration-blue-300 underline-offset-4 transition-colors hover:text-blue-500 hover:decoration-blue-500 dark:text-blue-400 dark:decoration-blue-700/50 dark:hover:text-blue-300"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   {children}
                 </a>
               ),
-              
+
               // Blockquotes
-              blockquote: ({children}) => (
-                <blockquote className="border-l-4 border-blue-500 pl-6 py-2 my-6 italic text-zinc-700 dark:text-zinc-300 bg-blue-50/50 dark:bg-blue-900/10 rounded-r-lg">
+              blockquote: ({ children }) => (
+                <blockquote className="my-6 rounded-r-lg border-l-4 border-blue-500 bg-blue-50/50 py-2 pl-6 text-zinc-700 italic dark:bg-blue-900/10 dark:text-zinc-300">
                   {children}
                 </blockquote>
               ),
-              
+
               // Tables
-              table: ({children}) => (
-                <div className="overflow-x-auto my-8 rounded-lg border border-zinc-200 dark:border-zinc-800">
-                  <table className="w-full border-collapse text-left text-sm">
-                    {children}
-                  </table>
+              table: ({ children }) => (
+                <div className="my-8 overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
+                  <table className="w-full border-collapse text-left text-sm">{children}</table>
                 </div>
               ),
-              thead: ({children}) => (
-                <thead className="bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800">
+              thead: ({ children }) => (
+                <thead className="border-b border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900">
                   {children}
                 </thead>
               ),
-              tbody: ({children}) => (
-                <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800 bg-white dark:bg-zinc-950">
+              tbody: ({ children }) => (
+                <tbody className="divide-y divide-zinc-200 bg-white dark:divide-zinc-800 dark:bg-zinc-950">
                   {children}
                 </tbody>
               ),
-              tr: ({children}) => (
-                <tr className="hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
+              tr: ({ children }) => (
+                <tr className="transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-900/50">
                   {children}
                 </tr>
               ),
-              td: ({children}) => (
-                <td className="px-6 py-4 text-zinc-600 dark:text-zinc-300">
-                  {children}
-                </td>
+              td: ({ children }) => (
+                <td className="px-6 py-4 text-zinc-600 dark:text-zinc-300">{children}</td>
               ),
-              th: ({children}) => (
+              th: ({ children }) => (
                 <th className="px-6 py-3 font-semibold text-zinc-900 dark:text-zinc-100">
                   {children}
                 </th>
               ),
-              
+
               // Horizontal rule
-              hr: () => (
-                <hr className="my-10 border-t border-zinc-200 dark:border-zinc-800" />
-              ),
+              hr: () => <hr className="my-10 border-t border-zinc-200 dark:border-zinc-800" />,
             }}
           >
             {readmeContent}

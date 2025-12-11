@@ -2,8 +2,7 @@
  * Lightweight logger placeholder. Swap for a structured logger when needed.
  */
 export const logger = {
-  info: (...args: unknown[]) => console.info("[info]", ...args),
-  warn: (...args: unknown[]) => console.warn("[warn]", ...args),
-  error: (...args: unknown[]) => console.error("[error]", ...args),
+  info: (...args: unknown[]) => console.info('[info]', ...args),
+  warn: (...args: unknown[]) => console.warn('[warn]', ...args),
+  error: (...args: unknown[]) => console.error('[error]', ...args),
 };
-

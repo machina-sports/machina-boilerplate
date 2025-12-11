@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 export class HttpClient {
   private readonly client: AxiosInstance;
@@ -13,9 +13,9 @@ export class HttpClient {
       (response) => response,
       (error) => {
         // Surface errors centrally; replace with telemetry/logging if needed.
-        console.error("[http]", error);
+        console.error('[http]', error);
         return Promise.reject(error);
-      },
+      }
     );
   }
 
@@ -23,4 +23,3 @@ export class HttpClient {
     return this.client.request<T>(config);
   }
 }
-

@@ -1,15 +1,14 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import { setMessage } from "@/providers/sample/reducer";
-import { useAppDispatch } from "@/store/dispatch";
-import { useAppSelector } from "@/store/useState";
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { setMessage } from '@/providers/sample/reducer';
+import { useAppDispatch } from '@/store/dispatch';
+import { useAppSelector } from '@/store/useState';
 
-
-import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { Button } from '@/components/ui/button';
+import { ArrowRight, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Home() {
   const dispatch = useAppDispatch();
@@ -35,7 +34,7 @@ export default function Home() {
         />
         <div className="flex items-center gap-4">
           <div className="flex flex-col items-center sm:items-start">
-            <p className="text-xs uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">
+            <p className="text-xs tracking-[0.2em] text-zinc-500 uppercase dark:text-zinc-400">
               Machina Boilerplate
             </p>
             <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
@@ -43,9 +42,9 @@ export default function Home() {
             </h1>
           </div>
         </div>
-        <p className="text-lg text-zinc-600 dark:text-zinc-300 text-left max-w-[620px]">
-          Use this page to validate the Redux store and provider chain before
-          adding real domains, containers, and services.
+        <p className="max-w-[620px] text-left text-lg text-zinc-600 dark:text-zinc-300">
+          Use this page to validate the Redux store and provider chain before adding real domains,
+          containers, and services.
         </p>
       </div>
 
@@ -55,7 +54,7 @@ export default function Home() {
             Message in global state
           </label>
           <input
-            className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-zinc-900 outline-none transition focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-50"
+            className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-zinc-900 transition outline-none focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-50"
             value={value}
             onChange={(event) => setValue(event.target.value)}
           />
@@ -70,7 +69,7 @@ export default function Home() {
           <Button
             variant="outline"
             type="button"
-            onClick={() => dispatch(setMessage(value || "Hello, Machina!"))}
+            onClick={() => dispatch(setMessage(value || 'Hello, Machina!'))}
           >
             Update message (Redux)
           </Button>
@@ -78,7 +77,7 @@ export default function Home() {
             variant="outline"
             type="button"
             onClick={() => {
-              console.log("Resetting input to:", message);
+              console.log('Resetting input to:', message);
               setValue(message);
             }}
           >
@@ -88,7 +87,12 @@ export default function Home() {
       </section>
 
       <div className="mt-10">
-        <Link href="/" className="flex items-center gap-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"><ArrowLeft className="size-4" /> Back to Home</Link>
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+        >
+          <ArrowLeft className="size-4" /> Back to Home
+        </Link>
       </div>
     </main>
   );

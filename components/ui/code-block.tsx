@@ -17,7 +17,9 @@ export function CodeBlock({ children, className }: CodeBlockProps) {
     if (typeof node === 'string') return node;
     if (Array.isArray(node)) return node.map(getTextContent).join('');
     if (typeof node === 'object' && node !== null && 'props' in node) {
-      return getTextContent((node as any).props.children);
+      return getTextContent(
+        (node as React.ReactElement<{ children: React.ReactNode }>).props.children
+      );
     }
     return '';
   };
@@ -33,23 +35,23 @@ export function CodeBlock({ children, className }: CodeBlockProps) {
   };
 
   return (
-    <div className="relative group rounded-lg overflow-hidden my-4 border border-[#44475a] bg-[#282a36] shadow-lg">
-      <div className="flex items-center justify-between px-4 py-2 bg-[#21222c] border-b border-[#44475a]">
-        <span className="text-xs font-mono text-[#bd93f9] uppercase tracking-wider">
+    <div className="group relative my-4 overflow-hidden rounded-lg border border-[#44475a] bg-[#282a36] shadow-lg">
+      <div className="flex items-center justify-between border-b border-[#44475a] bg-[#21222c] px-4 py-2">
+        <span className="font-mono text-xs tracking-wider text-[#bd93f9] uppercase">
           {language}
         </span>
         <button
           onClick={handleCopy}
-          className="p-1.5 rounded hover:bg-[#44475a] transition-colors text-[#6272a4] hover:text-[#8be9fd]"
+          className="rounded p-1.5 text-[#6272a4] transition-colors hover:bg-[#44475a] hover:text-[#8be9fd]"
           aria-label="Copy code"
         >
           {copied ? <Check size={14} /> : <Copy size={14} />}
         </button>
       </div>
-      
+
       <div className="overflow-x-auto bg-[#282a36]">
-        <SyntaxHighlighter 
-          language={language} 
+        <SyntaxHighlighter
+          language={language}
           style={dracula}
           customStyle={{
             margin: 0,
@@ -63,4 +65,3 @@ export function CodeBlock({ children, className }: CodeBlockProps) {
     </div>
   );
 }
-
