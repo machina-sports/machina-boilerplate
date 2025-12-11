@@ -1,21 +1,21 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { loadWelcome } from "@/providers/sample/actions";
+import { createSlice } from '@reduxjs/toolkit';
+import { loadWelcome } from '@/providers/sample/actions';
 
 type SampleState = {
   message: string;
-  status: "idle" | "loading" | "failed";
+  status: 'idle' | 'loading' | 'failed';
   loaded: boolean;
   error?: string;
 };
 
 const initialState: SampleState = {
-  message: "Welcome to Machina boilerplate",
-  status: "idle",
+  message: 'Welcome to Machina boilerplate',
+  status: 'idle',
   loaded: false,
 };
 
 const SampleReducer = createSlice({
-  name: "sample",
+  name: 'sample',
   initialState,
   reducers: {
     setMessage: (state, action) => {
@@ -25,16 +25,16 @@ const SampleReducer = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(loadWelcome.pending, (state) => {
-        state.status = "loading";
+        state.status = 'loading';
         state.error = undefined;
       })
       .addCase(loadWelcome.fulfilled, (state, action) => {
         state.message = action.payload ?? state.message;
-        state.status = "idle";
+        state.status = 'idle';
         state.loaded = true;
       })
       .addCase(loadWelcome.rejected, (state, action) => {
-        state.status = "failed";
+        state.status = 'failed';
         state.loaded = true;
         state.error = (action.payload as string) ?? action.error.message;
       });
@@ -43,4 +43,3 @@ const SampleReducer = createSlice({
 
 export const { setMessage } = SampleReducer.actions;
 export default SampleReducer;
-

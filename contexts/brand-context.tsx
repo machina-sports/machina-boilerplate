@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useMemo, type ReactNode } from "react";
-import { getBrandConfig, type BrandConfig } from "@/config/brands";
+import { createContext, useContext, useMemo, type ReactNode } from 'react';
+import { getBrandConfig, type BrandConfig } from '@/config/brands';
 
 const BrandContext = createContext<BrandConfig>(getBrandConfig());
 
@@ -17,4 +17,3 @@ export function BrandProvider({ brandId, children }: BrandProviderProps) {
 }
 
 export const useBrand = () => useContext(BrandContext);
-

@@ -1,19 +1,7 @@
 {
-  "exampleFiles": [
-    "app/page.tsx",
-    "app/docs",
-    "app/redux-demo",
-    "app/components",
-    "README.md"
-  ],
+  "exampleFiles": ["app/page.tsx", "app/docs", "app/redux-demo", "app/components", "README.md"],
   "exampleDependencies": {
-    "dependencies": [
-      "react-markdown",
-      "react-syntax-highlighter"
-    ],
-    "devDependencies": [
-      "@types/react-syntax-highlighter"
-    ]
+    "dependencies": ["react-markdown", "react-syntax-highlighter"],
+    "devDependencies": ["@types/react-syntax-highlighter"]
   }
 }
-

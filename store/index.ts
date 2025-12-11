@@ -1,10 +1,5 @@
-import {
-  combineReducers,
-  configureStore,
-  type Action,
-  type ThunkAction,
-} from "@reduxjs/toolkit";
-import SampleReducer from "@/providers/sample/reducer";
+import { combineReducers, configureStore, type Action, type ThunkAction } from '@reduxjs/toolkit';
+import SampleReducer from '@/providers/sample/reducer';
 
 const rootReducer = combineReducers({
   sample: SampleReducer.reducer,
@@ -16,7 +11,7 @@ export const makeStore = (preloadedState?: Partial<AppState>) =>
   configureStore({
     reducer: rootReducer,
     preloadedState,
-    devTools: process.env.NODE_ENV !== "production",
+    devTools: process.env.NODE_ENV !== 'production',
   });
 
 let clientStore: AppStore | undefined;
@@ -26,7 +21,7 @@ let clientStore: AppStore | undefined;
  * Keeps Redux SSR-safe for the App Router.
  */
 export const getStore = (preloadedState?: Partial<AppState>) => {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return makeStore(preloadedState);
   }
 
@@ -38,11 +33,10 @@ export const getStore = (preloadedState?: Partial<AppState>) => {
 };
 
 export type AppStore = ReturnType<typeof makeStore>;
-export type AppDispatch = AppStore["dispatch"];
+export type AppDispatch = AppStore['dispatch'];
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,
   AppState,
   unknown,
   Action<string>
 >;
-

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 /**
  * Placeholder for route-level analytics hooks.
@@ -7,4 +7,3 @@
 export function RouteTracker() {
   return null;
 }
-

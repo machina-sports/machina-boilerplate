@@ -1,28 +1,25 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse, NextRequest } from 'next/server';
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
-  const id = searchParams.get("id");
+  const id = searchParams.get('id');
   const api_url = process.env.MACHINA_CLIENT_URL;
   const bearer = process.env.MACHINA_API_KEY;
 
   if (!id) {
-    return NextResponse.json(
-      { error: "Article ID is required" },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: 'Article ID is required' }, { status: 400 });
   }
 
   try {
     // Check if it's a slug or ID
     const isObjectId = /^[0-9a-f]{24}$/i.test(id);
-    const filters = isObjectId ? { _id: id } : { "value.slug": id };
+    const filters = isObjectId ? { _id: id } : { 'value.slug': id };
 
     const response = await fetch(`${api_url}/document/search`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "X-Api-Token": `${bearer}`,
-        "Content-Type": "application/json",
+        'X-Api-Token': `${bearer}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         filters,
@@ -38,16 +35,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ article: data.data[0] });
     }
 
-    return NextResponse.json(
-      { error: "Article not found" },
-      { status: 404 },
-    );
+    return NextResponse.json({ error: 'Article not found' }, { status: 404 });
   } catch (e: any) {
     console.error(e);
-    return NextResponse.json(
-      { error: e.message },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }
-

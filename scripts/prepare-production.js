@@ -17,9 +17,7 @@ const gitignorePath = path.join(rootDir, '.gitignore');
 const packageJsonPath = path.join(rootDir, 'package.json');
 
 // Read current .gitignore
-let gitignoreContent = fs.existsSync(gitignorePath)
-  ? fs.readFileSync(gitignorePath, 'utf-8')
-  : '';
+let gitignoreContent = fs.existsSync(gitignorePath) ? fs.readFileSync(gitignorePath, 'utf-8') : '';
 
 // Read package.json
 if (!fs.existsSync(packageJsonPath)) {
@@ -32,7 +30,7 @@ const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
 console.log('🚀 Preparing boilerplate for production...\n');
 
 // Add example files to .gitignore if not already present
-const gitignoreEntries = config.exampleFiles.map(file => {
+const gitignoreEntries = config.exampleFiles.map((file) => {
   // Ensure proper path format
   const normalizedPath = file.startsWith('/') ? file.slice(1) : file;
   return normalizedPath;
@@ -54,7 +52,7 @@ if (!gitignoreContent.includes('# Boilerplate example files')) {
 let hasChanges = false;
 
 // Remove from dependencies
-config.exampleDependencies.dependencies.forEach(dep => {
+config.exampleDependencies.dependencies.forEach((dep) => {
   if (packageJson.dependencies && packageJson.dependencies[dep]) {
     delete packageJson.dependencies[dep];
     hasChanges = true;
@@ -63,7 +61,7 @@ config.exampleDependencies.dependencies.forEach(dep => {
 });
 
 // Remove from devDependencies
-config.exampleDependencies.devDependencies.forEach(dep => {
+config.exampleDependencies.devDependencies.forEach((dep) => {
   if (packageJson.devDependencies && packageJson.devDependencies[dep]) {
     delete packageJson.devDependencies[dep];
     hasChanges = true;
@@ -82,4 +80,3 @@ if (hasChanges) {
 console.log('\n✨ Production preparation complete!');
 console.log('📝 Example files are now ignored by git');
 console.log('💡 To restore examples, run: npm run prepare:development\n');
-

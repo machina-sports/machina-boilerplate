@@ -1,2 +1,1 @@
-export { HttpClient } from "@/libs/http/http-client";
-
+export { HttpClient } from '@/libs/http/http-client';

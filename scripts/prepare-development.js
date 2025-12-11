@@ -21,21 +21,21 @@ console.log('🔧 Restoring boilerplate to development mode...\n');
 // Read current .gitignore
 if (fs.existsSync(gitignorePath)) {
   let gitignoreContent = fs.readFileSync(gitignorePath, 'utf-8');
-  
+
   // Remove boilerplate section
   const separator = '\n# Boilerplate example files (added by prepare:production)\n';
   const boilerplateStart = gitignoreContent.indexOf(separator);
-  
+
   if (boilerplateStart !== -1) {
     const beforeSection = gitignoreContent.substring(0, boilerplateStart);
     const afterSection = gitignoreContent.substring(boilerplateStart);
     const nextSectionStart = afterSection.indexOf('\n#');
-    
+
     let updatedGitignore = beforeSection;
     if (nextSectionStart !== -1 && nextSectionStart < afterSection.length) {
       updatedGitignore += afterSection.substring(nextSectionStart);
     }
-    
+
     fs.writeFileSync(gitignorePath, updatedGitignore, 'utf-8');
     console.log('✅ Removed example files from .gitignore');
   } else {
@@ -57,15 +57,15 @@ let hasChanges = false;
 // Restore dependencies (with versions from original)
 const originalDeps = {
   'react-markdown': '^10.1.0',
-  'react-syntax-highlighter': '^16.1.0'
+  'react-syntax-highlighter': '^16.1.0',
 };
 
 const originalDevDeps = {
-  '@types/react-syntax-highlighter': '^15.5.13'
+  '@types/react-syntax-highlighter': '^15.5.13',
 };
 
 // Add back dependencies
-config.exampleDependencies.dependencies.forEach(dep => {
+config.exampleDependencies.dependencies.forEach((dep) => {
   if (!packageJson.dependencies[dep]) {
     packageJson.dependencies[dep] = originalDeps[dep] || 'latest';
     hasChanges = true;
@@ -74,7 +74,7 @@ config.exampleDependencies.dependencies.forEach(dep => {
 });
 
 // Add back devDependencies
-config.exampleDependencies.devDependencies.forEach(dep => {
+config.exampleDependencies.devDependencies.forEach((dep) => {
   if (!packageJson.devDependencies[dep]) {
     packageJson.devDependencies[dep] = originalDevDeps[dep] || 'latest';
     hasChanges = true;
@@ -92,4 +92,3 @@ if (hasChanges) {
 
 console.log('\n✨ Development mode restored!');
 console.log('📝 Example files are now tracked by git\n');
-

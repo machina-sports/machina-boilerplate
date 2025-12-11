@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 type SessionProviderProps = {
   children: ReactNode;
@@ -12,4 +12,3 @@ type SessionProviderProps = {
 export function SessionProvider({ children }: SessionProviderProps) {
   return children;
 }
-

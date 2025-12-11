@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 type PosthogProviderProps = {
   children?: ReactNode;
@@ -12,4 +12,3 @@ type PosthogProviderProps = {
 export function PosthogProvider({ children }: PosthogProviderProps) {
   return children ?? null;
 }
-

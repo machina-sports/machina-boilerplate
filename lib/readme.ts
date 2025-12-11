@@ -11,4 +11,3 @@ export function getReadmeContent(): string {
     return '# Documentation\n\nFailed to load README.md';
   }
 }
-

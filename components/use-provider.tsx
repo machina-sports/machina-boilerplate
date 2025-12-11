@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 /**
  * Generic UI provider placeholder. Add modal/portal/root-level contexts here.
@@ -8,4 +8,3 @@ import type { ReactNode } from "react";
 export function MainProvider({ children }: { children: ReactNode }) {
   return children;
 }
-

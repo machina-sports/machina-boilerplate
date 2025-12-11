@@ -13,6 +13,7 @@ npm run prepare:production
 ```
 
 **What this script does:**
+
 - ✅ Adds example files to `.gitignore`
 - ✅ Removes example dependencies from `package.json`:
   - `react-markdown`
@@ -21,6 +22,7 @@ npm run prepare:production
 - ⚠️ **Important**: Run `npm install` after running this script to update `node_modules`
 
 **Ignored files:**
+
 - `app/page.tsx` (example home page)
 - `app/docs/` (boilerplate documentation)
 - `app/redux-demo/` (Redux demo)
@@ -36,6 +38,7 @@ npm run prepare:development
 ```
 
 **What this script does:**
+
 - ✅ Removes example entries from `.gitignore`
 - ✅ Restores example dependencies in `package.json`
 - ⚠️ **Important**: Run `npm install` after running this script to restore dependencies

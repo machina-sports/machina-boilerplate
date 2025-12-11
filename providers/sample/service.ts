@@ -1,13 +1,12 @@
-import ClientBaseService from "@/libs/client/base.service";
+import ClientBaseService from '@/libs/client/base.service';
 
 class SampleService extends ClientBaseService {
-  prefix = "/api/sample";
+  prefix = '/api/sample';
 
   async getWelcome(): Promise<{ message: string }> {
     // Replace with real API call when available.
-    return Promise.resolve({ message: "Welcome to Machina boilerplate (API)" });
+    return Promise.resolve({ message: 'Welcome to Machina boilerplate (API)' });
   }
 }
 
 export const sampleService = new SampleService();
-
