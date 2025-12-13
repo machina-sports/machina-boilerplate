@@ -126,3 +126,7 @@
     margin-right: 0.5rem;
   }
 }
+
+.aui-chat-modal-body {
+  background-color: #fff;
+}
