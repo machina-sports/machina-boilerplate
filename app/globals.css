@@ -3,6 +3,23 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Use the @theme directive to set the default fonts */
+@theme {
+  /* This makes 'font-sans' utility class use the Geist font */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  /* This makes 'font-mono' utility class use the Geist Mono font */
+  --font-mono:
+    var(--font-geist-mono), ui-monospace, 'SFMono-Regular', 'SF Mono', Consolas, 'Liberation Mono',
+    Menlo, monospace;
+}
+
+@layer base {
+  html {
+    /* Apply the font-sans class by default to the html element */
+    @apply font-sans antialiased;
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -117,7 +134,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
   }
   /* Make paragraphs inside list items inline for numbered lists */
   ol li > p:first-child {
@@ -127,6 +144,26 @@
   }
 }
 
-.aui-chat-modal-body {
-  background-color: #fff;
+.aui-assistant-message-content {
+  max-height: 60vh;
+  overflow: auto;
+  /* ensure scroll doesn't overlap content */
+  scrollbar-gutter: stable;
+  padding-right: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.aui-thread-viewport {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-sans);
 }

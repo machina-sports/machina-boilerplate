@@ -5,7 +5,7 @@
   "description": "Machina boilerplate for new Next.js frontends with Redux, Tailwind, and typed tooling.",
   "license": "MIT",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

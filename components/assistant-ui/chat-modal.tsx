@@ -4,33 +4,64 @@ import { useChatOpen } from '@/contexts/chat-open-context';
 import { Thread } from '@/components/assistant-ui/thread';
 import { ThreadList } from '@/components/assistant-ui/thread-list';
 import type { FC } from 'react';
+import Image from 'next/image';
 
 export const ChatModal: FC = () => {
-  const { isOpen } = useChatOpen();
+  const { isOpen, toggleOpen } = useChatOpen();
 
   if (!isOpen) {
     return null;
   }
 
   return (
-    <div className="aui-chat-modal fixed inset-0 z-30 flex items-end justify-end p-4 md:items-center md:justify-center">
+    <div className="aui-chat-modal fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div className="aui-chat-modal-backdrop absolute inset-0 bg-black/50 transition-opacity" />
+      <div
+        className="aui-chat-modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+        onClick={toggleOpen}
+      />
 
       {/* Modal Content */}
-      <div className="aui-chat-modal-content relative z-10 flex h-[80vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-background shadow-2xl md:h-[600px]">
+      <div className="aui-chat-modal-content relative z-50 flex h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-gray-800 dark:bg-zinc-900">
         {/* Header with Thread List */}
-        <div className="aui-chat-modal-header flex-shrink-0 border-b border-border bg-muted p-4">
-          <h2 className="text-lg font-semibold mb-3">Threads</h2>
+        <div className="aui-chat-modal-header flex-none border-b border-gray-200 bg-gray-50/50 p-4 dark:border-gray-800 dark:bg-zinc-900/50">
+          <div className="mb-3 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Image src="/favicon.ico" alt="Machina Boilerplate" width={20} height={20} />
+              <div className="h-6 w-px bg-gray-400"></div>
+              <h2 className="font-sans text-lg font-semibold text-gray-900 dark:text-gray-100">
+                Machina Boilerplate Assistant
+              </h2>
+            </div>
+            <button
+              onClick={toggleOpen}
+              className="rounded-full p-2 transition-colors hover:bg-gray-200 dark:hover:bg-zinc-800"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-x"
+              >
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+              </svg>
+            </button>
+          </div>
           <ThreadList />
         </div>
 
         {/* Main Thread Area */}
-        <div className="aui-chat-modal-body flex-1 overflow-hidden">
+        <div className="aui-chat-modal-body relative min-h-0 flex-1 bg-white dark:bg-zinc-900">
           <Thread />
         </div>
       </div>
     </div>
   );
 };
-
