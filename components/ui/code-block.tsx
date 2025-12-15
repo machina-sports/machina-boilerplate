@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dracula } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { oneLight } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { Check, Copy } from 'lucide-react';
 
 interface CodeBlockProps {
@@ -12,6 +13,26 @@ interface CodeBlockProps {
 
 export function CodeBlock({ children, className }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+
+  // Detecta o tema atual verificando a classe 'dark' no elemento raiz
+  useEffect(() => {
+    const checkTheme = () => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    };
+
+    // Verifica o tema inicial
+    checkTheme();
+
+    // Observa mudanças no tema
+    const observer = new MutationObserver(checkTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const getTextContent = (node: React.ReactNode): string => {
     if (typeof node === 'string') return node;
@@ -34,29 +55,46 @@ export function CodeBlock({ children, className }: CodeBlockProps) {
     });
   };
 
+  const theme = isDark ? dracula : oneLight;
+  const bgColor = isDark ? '#282a36' : '#fafafa';
+  const borderColor = isDark ? '#44475a' : '#e5e7eb';
+  const headerBg = isDark ? '#21222c' : '#f3f4f6';
+
   return (
-    <div className="group relative my-4 overflow-hidden rounded-lg border border-[#44475a] bg-[#282a36] shadow-lg">
-      <div className="flex items-center justify-between border-b border-[#44475a] bg-[#21222c] px-4 py-2">
-        <span className="font-mono text-xs tracking-wider text-[#bd93f9] uppercase">
+    <div
+      className="group relative my-4 overflow-hidden rounded-lg border shadow-lg dark:border-[#44475a] dark:bg-[#282a36] border-gray-200 bg-gray-50"
+      style={{
+        borderColor,
+        backgroundColor: bgColor,
+      }}
+    >
+      <div
+        className="flex items-center justify-between border-b px-4 py-2 dark:border-[#44475a] dark:bg-[#21222c] border-gray-200 bg-gray-100"
+        style={{
+          borderColor,
+          backgroundColor: headerBg,
+        }}
+      >
+        <span className="font-mono text-xs tracking-wider uppercase dark:text-[#bd93f9] text-gray-600">
           {language}
         </span>
         <button
           onClick={handleCopy}
-          className="rounded p-1.5 text-[#6272a4] transition-colors hover:bg-[#44475a] hover:text-[#8be9fd]"
+          className="rounded p-1.5 transition-colors dark:text-[#6272a4] dark:hover:bg-[#44475a] dark:hover:text-[#8be9fd] text-gray-500 hover:bg-gray-200 hover:text-blue-600"
           aria-label="Copy code"
         >
           {copied ? <Check size={14} /> : <Copy size={14} />}
         </button>
       </div>
 
-      <div className="overflow-x-auto bg-[#282a36]">
+      <div className="overflow-x-auto dark:bg-[#282a36] bg-gray-50" style={{ backgroundColor: bgColor }}>
         <SyntaxHighlighter
           language={language}
-          style={dracula}
+          style={theme}
           customStyle={{
             margin: 0,
             padding: '1rem',
-            background: '#282a36',
+            background: bgColor,
           }}
         >
           {textContent}

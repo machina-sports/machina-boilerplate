@@ -27,7 +27,7 @@ export function ConfigurationPanel() {
           <WorkflowSelector />
         </div>
 
-        {selectedWorkflowData && selectedWorkflowData.parameters.length > 0 && (
+        {selectedWorkflowData && selectedWorkflowData.parameters && selectedWorkflowData.parameters.length > 0 && (
           <div className="space-y-4 border-t border-zinc-200 pt-6 dark:border-zinc-800">
             <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Configure Parameters

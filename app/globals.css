@@ -144,15 +144,6 @@
   }
 }
 
-.aui-assistant-message-content {
-  max-height: 60vh;
-  overflow: auto;
-  /* ensure scroll doesn't overlap content */
-  scrollbar-gutter: stable;
-  padding-right: 0.25rem;
-  margin-bottom: 1rem;
-}
-
 .aui-thread-viewport {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;

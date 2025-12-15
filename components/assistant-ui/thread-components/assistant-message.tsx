@@ -6,6 +6,7 @@ import { MessagePrimitive } from '@assistant-ui/react';
 import { memo } from 'react';
 import type { FC } from 'react';
 import AssistantActionBar from './assistant-action-bar';
+import AssistantRun from './assistant-run';
 import BranchPicker from './branch-picker';
 import MessageError from './message-error';
 
@@ -15,7 +16,7 @@ const AssistantMessage: FC = () => {
       className="aui-assistant-message-root fade-in slide-in-from-bottom-1 animate-in relative mx-auto w-full max-w-[var(--thread-max-width)] py-3 duration-150"
       data-role="assistant"
     >
-      <div className="aui-assistant-message-content text-foreground max-h-[60vh] overflow-auto px-2 leading-relaxed wrap-break-word">
+      <div className="aui-assistant-message-content text-foreground px-2 leading-relaxed wrap-break-word">
         <MessagePrimitive.Parts
           components={{
             Text: MarkdownText,

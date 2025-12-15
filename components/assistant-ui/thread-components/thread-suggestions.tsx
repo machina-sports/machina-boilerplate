@@ -4,19 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ThreadPrimitive } from '@assistant-ui/react';
 import { memo } from 'react';
 import type { FC } from 'react';
-
-const SUGGESTIONS = [
-  {
-    title: "What's the weather",
-    label: 'in San Francisco?',
-    prompt: "What's the weather in San Francisco?",
-  },
-  {
-    title: 'Explain React hooks',
-    label: 'like useState and useEffect',
-    prompt: 'Explain React hooks like useState and useEffect',
-  },
-] as const;
+import { SUGGESTIONS } from '@/components/assistant-ui/utils/suggestions';
 
 const ThreadSuggestions: FC = () => {
   return (
@@ -24,7 +12,7 @@ const ThreadSuggestions: FC = () => {
       {SUGGESTIONS.map((suggestion, index) => (
         <div
           key={suggestion.prompt}
-          className="aui-thread-welcome-suggestion-display fade-in slide-in-from-bottom-2 animate-in fill-mode-both duration-200 nth-[n+3]:hidden @md:nth-[n+3]:block"
+          className="aui-thread-welcome-suggestion-display fade-in slide-in-from-bottom-2 animate-in fill-mode-both duration-200"
           style={{ animationDelay: `${100 + index * 50}ms` }}
         >
           <ThreadPrimitive.Suggestion prompt={suggestion.prompt} send asChild>

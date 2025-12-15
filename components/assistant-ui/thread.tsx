@@ -8,6 +8,7 @@ const Composer = dynamic(() => import('./thread-components/composer'));
 const EditComposer = dynamic(() => import('./thread-components/edit-composer'));
 const ThreadScrollToBottom = dynamic(() => import('./thread-components/thread-scroll-to-bottom'));
 const ThreadWelcome = dynamic(() => import('./thread-components/thread-welcome'));
+const ThreadLoading = dynamic(() => import('./thread-components/thread-loading'));
 const UserMessage = dynamic(() => import('./thread-components/user-message'));
 
 export const Thread: FC = () => {
@@ -20,7 +21,7 @@ export const Thread: FC = () => {
     >
       <ThreadPrimitive.Viewport
         turnAnchor="top"
-        className="aui-thread-viewport flex flex-1 flex-col overflow-y-auto scroll-smooth px-4 pt-4"
+        className="aui-thread-viewport flex-1 overflow-y-auto scroll-smooth px-4 pt-4"
       >
         <AssistantIf condition={({ thread }) => thread.isEmpty}>
           <ThreadWelcome />
@@ -32,10 +33,11 @@ export const Thread: FC = () => {
             AssistantMessage,
           }}
         />
-        <div className="min-h-4 flex-shrink-0" /> {/* Spacer no final das mensagens */}
+        <ThreadLoading />
+        <div className="min-h-8 flex-shrink-0" /> {/* Spacer no final das mensagens */}
       </ThreadPrimitive.Viewport>
 
-      <div className="bg-background relative z-10 px-4 pt-2 pb-4">
+      <div className="bg-background relative z-10 px-4 pt-2 pb-4 flex-shrink-0">
         <ThreadScrollToBottom />
         <Composer />
       </div>

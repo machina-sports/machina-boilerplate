@@ -222,7 +222,7 @@ export const ComposerAddAttachment: FC = () => {
     <ComposerPrimitive.AddAttachment asChild>
       <TooltipIconButton
         tooltip="Add Attachment"
-        side="bottom"
+        side="top"
         variant="ghost"
         size="icon"
         className="aui-composer-add-attachment size-[34px] rounded-full p-1 font-semibold text-xs hover:bg-muted-foreground/15 dark:border-muted-foreground/15 dark:hover:bg-muted-foreground/30"

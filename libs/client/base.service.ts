@@ -4,24 +4,24 @@ class ClientBaseService {
   prefix = '';
   api = api;
 
-  get(prefix = this.prefix, options: unknown) {
-    return this.api.get(prefix, options as any);
+  get<T = any>(prefix = this.prefix, options: unknown) {
+    return this.api.get<T>(prefix, options as any);
   }
 
-  patch(body: unknown, prefix = this.prefix, options: unknown) {
-    return this.api.patch(`${prefix}`, body, options as any);
+  patch<T = any>(body: unknown, prefix = this.prefix, options: unknown) {
+    return this.api.patch<T>(`${prefix}`, body, options as any);
   }
 
-  post(body: unknown, prefix = this.prefix, options: unknown) {
-    return this.api.post(prefix, body, options as any);
+  post<T = any>(body: unknown, prefix = this.prefix, options: unknown) {
+    return this.api.post<T>(prefix, body, options as any);
   }
 
-  put(body: unknown, prefix = this.prefix, options: unknown) {
-    return this.api.put(`${prefix}`, body, options as any);
+  put<T = any>(body: unknown, prefix = this.prefix, options: unknown) {
+    return this.api.put<T>(`${prefix}`, body, options as any);
   }
 
-  delete(prefix = this.prefix, body: unknown = {}) {
-    return this.api.delete(prefix, body);
+  delete<T = any>(prefix = this.prefix, body: unknown = {}) {
+    return this.api.delete<T>(prefix, body);
   }
 }
 

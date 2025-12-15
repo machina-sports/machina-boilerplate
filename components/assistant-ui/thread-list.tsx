@@ -15,6 +15,7 @@ export const ThreadList: FC = () => {
   return (
     <ThreadListPrimitive.Root className="aui-root aui-thread-list-root flex flex-col gap-1">
       <ThreadListNew />
+      <div className="my-2 h-px bg-border" />
       <AssistantIf condition={({ threads }) => threads.isLoading}>
         <ThreadListSkeleton />
       </AssistantIf>
@@ -73,6 +74,7 @@ const ThreadListItemArchive: FC = () => {
       <TooltipIconButton
         variant="ghost"
         tooltip="Archive thread"
+        side="top"
         className="aui-thread-list-item-archive mr-2 size-7 p-0 opacity-0 transition-opacity group-hover:opacity-100"
       >
         <ArchiveIcon className="size-4" />

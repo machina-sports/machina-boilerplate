@@ -34,24 +34,24 @@ class ClientBaseController {
     }
   }
 
-  get(url: string, options: FetchOptions) {
-    return this.fetch(url, { ...options, method: 'GET' });
+  get<T = any>(url: string, options: FetchOptions) {
+    return this.fetch(url, { ...options, method: 'GET' }) as Promise<T>;
   }
 
-  patch(url: string, body: unknown, options: FetchOptions) {
-    return this.fetch(url, { ...options, method: 'PATCH', body });
+  patch<T = any>(url: string, body: unknown, options: FetchOptions) {
+    return this.fetch(url, { ...options, method: 'PATCH', body }) as Promise<T>;
   }
 
-  post(url: string, body: unknown, options: FetchOptions = {}) {
-    return this.fetch(url, { ...options, method: 'POST', body });
+  post<T = any>(url: string, body: unknown, options: FetchOptions = {}) {
+    return this.fetch(url, { ...options, method: 'POST', body }) as Promise<T>;
   }
 
-  put(url: string, body: unknown, options: FetchOptions = {}) {
-    return this.fetch(url, { ...options, method: 'PUT', body });
+  put<T = any>(url: string, body: unknown, options: FetchOptions = {}) {
+    return this.fetch(url, { ...options, method: 'PUT', body }) as Promise<T>;
   }
 
-  delete(url: string, body: unknown = {}) {
-    return this.fetch(url, { method: 'DELETE', body });
+  delete<T = any>(url: string, body: unknown = {}) {
+    return this.fetch(url, { method: 'DELETE', body }) as Promise<T>;
   }
 }
 
