@@ -21,6 +21,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set image tag
         run: echo "IMAGE_TAG=${{ github.event.inputs.image_tag }}" >> $GITHUB_ENV
 
@@ -37,6 +40,21 @@ jobs:
 
       - name: Deploy to AKS
         run: |
-          kubectl set image deployment/${{ env.DEPLOYMENT_NAME }} ${{ env.CONTAINER_NAME }}=${{ secrets.REGISTRY_URL }}/${{ env.APP_NAME }}:${{ env.IMAGE_TAG }} -n ${{ env.NAMESPACE }}
+          # Replace placeholder in deployment.yaml with actual image
+          sed -i "s|REPLACE_WITH_REGISTRY_URL|${{ secrets.REGISTRY_URL }}|g" k8s/deployment.yaml
+          sed -i "s|:latest|:${{ env.IMAGE_TAG }}|g" k8s/deployment.yaml
+
+          # Apply Kubernetes manifests (creates or updates resources)
+          kubectl apply -f k8s/deployment.yaml -n ${{ env.NAMESPACE }}
+          kubectl apply -f k8s/service.yaml -n ${{ env.NAMESPACE }}
+          kubectl apply -f k8s/ingress.yaml -n ${{ env.NAMESPACE }}
+
+          # Wait for rollout to complete
           kubectl rollout status deployment/${{ env.DEPLOYMENT_NAME }} -n ${{ env.NAMESPACE }}
 
+      - name: Post Login to Azure
+        if: always()
+        run: |
+          echo "Post job cleanup."
+          echo "Clearing azure cli accounts from the local cache."
+          az account clear
