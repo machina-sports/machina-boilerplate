@@ -14,11 +14,9 @@ spec:
       labels:
         app: machina-frontend-boilerplate
     spec:
-      imagePullSecrets:
-        - name: regcred # Ensure this secret exists in your namespace
       containers:
         - name: machina-frontend-boilerplate
-          image: REPLACE_WITH_REGISTRY_URL/machina-frontend-boilerplate:latest
+          image: mateuspinheiro/machina-frontend-boilerplate:latest
           ports:
             - containerPort: 3000
           resources:
