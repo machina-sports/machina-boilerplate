@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: machina-frontend-boilerplate
-          image: mateuspinheiro/machina-frontend-boilerplate:latest
+          image: REPLACE_WITH_REGISTRY_URL/machina-frontend-boilerplate:latest
           ports:
             - containerPort: 3000
           resources:

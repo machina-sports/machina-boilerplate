@@ -1,9 +1,17 @@
-name: Build Staging
+name: Build and Deploy Staging
 
 on:
   push:
     tags:
-      - "v.staging-*"
+      - 'v.staging-*'
+
+env:
+  AKS_CLUSTER_NAME: mks-community-cluster
+  AKS_RESOURCE_GROUP: mks-community-group
+  NAMESPACE: machina-frontend-boilerplate
+  APP_NAME: machina-frontend-boilerplate
+  DEPLOYMENT_NAME: machina-frontend-boilerplate
+  CONTAINER_NAME: machina-frontend-boilerplate
 
 jobs:
   build-and-deploy:
@@ -43,3 +51,34 @@ jobs:
             ${{ secrets.REGISTRY_URL }}/machina-frontend-boilerplate:${{ env.PACKAGE_VERSION }}
             ${{ secrets.REGISTRY_URL }}/machina-frontend-boilerplate:staging-latest
 
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Get AKS credentials
+        uses: azure/aks-set-context@v3
+        with:
+          cluster-name: ${{ env.AKS_CLUSTER_NAME }}
+          resource-group: ${{ env.AKS_RESOURCE_GROUP }}
+
+      - name: Deploy to AKS
+        run: |
+          # Replace placeholder in deployment.yaml with actual image
+          sed -i "s|REPLACE_WITH_REGISTRY_URL|${{ secrets.REGISTRY_URL }}|g" k8s/deployment.yaml
+          sed -i "s|:latest|:${{ env.PACKAGE_VERSION }}|g" k8s/deployment.yaml
+
+          # Apply Kubernetes manifests (creates or updates resources)
+          kubectl apply -f k8s/deployment.yaml -n ${{ env.NAMESPACE }}
+          kubectl apply -f k8s/service.yaml -n ${{ env.NAMESPACE }}
+          kubectl apply -f k8s/ingress.yaml -n ${{ env.NAMESPACE }}
+
+          # Wait for rollout to complete
+          kubectl rollout status deployment/${{ env.DEPLOYMENT_NAME }} -n ${{ env.NAMESPACE }}
+
+      - name: Post Login to Azure
+        if: always()
+        run: |
+          echo "Post job cleanup."
+          echo "Clearing azure cli accounts from the local cache."
+          az account clear
