@@ -14,6 +14,8 @@ spec:
       labels:
         app: machina-frontend-boilerplate
     spec:
+      imagePullSecrets:
+        - name: dockerhub-secret
       containers:
         - name: machina-frontend-boilerplate
           image: REPLACE_WITH_REGISTRY_URL/machina-frontend-boilerplate:latest
