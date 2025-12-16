@@ -1,71 +1,143 @@
-# Boilerplate Preparation Scripts
+# Scripts
 
-Scripts to manage boilerplate example files when preparing the project for production.
+Utility scripts for the Machina Frontend Boilerplate.
 
-## 📋 Usage
+## Available Scripts
 
-### Prepare for Production
+### Production/Development Mode
 
-Removes example files and optional dependencies from the project:
+#### `prepare-production.js`
+Prepares the boilerplate for production use by removing example files and optional dependencies.
 
 ```bash
 npm run prepare:production
+npm install  # Update dependencies after
 ```
 
-**What this script does:**
+**What it does:**
+- Adds example files to `.gitignore`
+- Removes optional dependencies (`react-markdown`, `react-syntax-highlighter`)
+- Cleans up demo pages and components
 
-- ✅ Adds example files to `.gitignore`
-- ✅ Removes example dependencies from `package.json`:
-  - `react-markdown`
-  - `react-syntax-highlighter`
-  - `@types/react-syntax-highlighter`
-- ⚠️ **Important**: Run `npm install` after running this script to update `node_modules`
-
-**Ignored files:**
-
-- `app/page.tsx` (example home page)
-- `app/docs/` (boilerplate documentation)
-- `app/redux-demo/` (Redux demo)
-- `app/components/` (example components)
-- `README.md` (boilerplate documentation)
-
-### Restore Development Mode
-
-Restores example files and dependencies:
+#### `prepare-development.js`
+Restores example files and dependencies for development/contribution.
 
 ```bash
 npm run prepare:development
+npm install  # Restore dependencies
 ```
 
-**What this script does:**
+**What it does:**
+- Removes example files from `.gitignore`
+- Restores optional dependencies
+- Re-enables demo pages
 
-- ✅ Removes example entries from `.gitignore`
-- ✅ Restores example dependencies in `package.json`
-- ⚠️ **Important**: Run `npm install` after running this script to restore dependencies
+---
 
-## 🔧 Configuration
+### AI Assistant
 
-The managed files and dependencies are configured in `scripts/boilerplate-config.json`. You can edit this file to add or remove items.
+#### `test-gemini.js`
+Tests if the Gemini API key is configured correctly.
 
-## 📝 Recommended Workflow
+```bash
+node scripts/test-gemini.js
+```
 
-### When creating a new project from the boilerplate:
+**What it does:**
+- Validates the API key from `.env.local`
+- Sends a test request to Gemini
+- Shows detailed error messages if something is wrong
+- Displays usage information
 
-1. Clone the repository
-2. Run `npm install`
-3. Run `npm run prepare:production`
-4. Run `npm install` again
-5. Commit the changes (example files will be ignored)
-6. Start developing!
+**Example output (success):**
+```
+🔍 Testing Gemini API Key...
 
-### To contribute to the boilerplate:
+📝 API Key: AIzaSyBxHb...yadA
 
-1. Run `npm run prepare:development` to restore examples
-2. Make your changes
-3. Run `npm run prepare:production` before committing (if needed)
+⏳ Sending test request...
 
-## ⚠️ Warnings
+✅ SUCCESS! API key is working!
 
-- **Always run `npm install`** after using the preparation scripts
-- The scripts modify `.gitignore` and `package.json` - make sure to review the changes
-- Already committed files won't be automatically removed - you'll need to remove them manually if needed
+📤 Test Response:
+──────────────────────────────────────────────────
+Hello, Machina!
+──────────────────────────────────────────────────
+
+🎉 Your Gemini API is configured correctly!
+```
+
+**Example output (rate limit):**
+```
+❌ ERROR: API key test failed
+
+🚫 Rate Limit Exceeded
+   You have exceeded the API quota.
+   Wait a few minutes and try again.
+   Check usage: https://ai.dev/usage?tab=rate-limit
+```
+
+---
+
+## Configuration Files
+
+### `boilerplate-config.json`
+Configuration for the prepare scripts. Defines which files are considered "examples" and which dependencies are optional.
+
+```json
+{
+  "exampleFiles": [
+    "app/page.tsx",
+    "app/docs/",
+    "app/redux-demo/",
+    ...
+  ],
+  "optionalDependencies": [
+    "react-markdown",
+    "react-syntax-highlighter",
+    ...
+  ]
+}
+```
+
+---
+
+## Adding New Scripts
+
+To add a new script:
+
+1. Create the script file in `scripts/`
+2. Add execution permissions if needed: `chmod +x scripts/your-script.js`
+3. Add to `package.json` scripts section:
+   ```json
+   {
+     "scripts": {
+       "your-command": "node scripts/your-script.js"
+     }
+   }
+   ```
+4. Document it here in this README
+
+---
+
+## Troubleshooting
+
+### "Cannot find module"
+Make sure you've run `npm install` to install all dependencies.
+
+### "Permission denied"
+On Unix-based systems, you may need to add execute permissions:
+```bash
+chmod +x scripts/your-script.js
+```
+
+### Script not found
+Ensure you're running scripts from the project root directory:
+```bash
+cd /path/to/machina-frontend-boilerplate
+npm run script-name
+```
+
+---
+
+For more information about the boilerplate, see the main [README.md](../README.md).

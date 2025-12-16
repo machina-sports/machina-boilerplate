@@ -66,6 +66,9 @@ const TipsPage = () => {
           </div>
 
           <div className="flex flex-col items-center gap-2 pt-2">
+            <a href="/playground" className="text-sm text-blue-500 hover:underline">
+              🤖 Try the Assistant Playground
+            </a>
             <a href="/redux-demo" className="text-sm text-blue-500 hover:underline">
               Check Redux Demo Page
             </a>
