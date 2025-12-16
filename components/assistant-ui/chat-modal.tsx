@@ -22,9 +22,9 @@ export const ChatModal: FC = () => {
       />
 
       {/* Modal Content */}
-      <div className="aui-chat-modal-content relative z-50 flex h-[85vh] w-full max-w-3xl flex-col rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-gray-800 dark:bg-zinc-900">
+      <div className="aui-chat-modal-content relative z-50 flex h-[85vh] w-full max-w-3xl flex-col rounded-2xl bg-white shadow-2xl dark:border-gray-800 dark:bg-zinc-900 rounded-t-none">
         {/* Header with Thread List */}
-        <div className="aui-chat-modal-header flex-shrink-0 border-b border-gray-200 bg-gray-50/50 p-4 dark:border-gray-800 dark:bg-zinc-900/50">
+        <div className="aui-chat-modal-header flex-shrink-0 bg-gray-50/50 p-4 dark:border-gray-800 dark:bg-zinc-900/50">
           <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Image src="/favicon.ico" alt="Machina Boilerplate" width={20} height={20} />

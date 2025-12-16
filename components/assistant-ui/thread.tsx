@@ -21,7 +21,7 @@ export const Thread: FC = () => {
     >
       <ThreadPrimitive.Viewport
         turnAnchor="top"
-        className="aui-thread-viewport flex-1 overflow-y-auto scroll-smooth px-4 pt-4"
+        className="aui-thread-viewport scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 dark:hover:scrollbar-thumb-gray-500 flex-1 overflow-y-auto scroll-smooth px-4 pt-4"
       >
         <AssistantIf condition={({ thread }) => thread.isEmpty}>
           <ThreadWelcome />
@@ -37,7 +37,7 @@ export const Thread: FC = () => {
         <div className="min-h-8 flex-shrink-0" /> {/* Spacer no final das mensagens */}
       </ThreadPrimitive.Viewport>
 
-      <div className="bg-background relative z-10 px-4 pt-2 pb-4 flex-shrink-0">
+      <div className="bg-background relative z-10 flex-shrink-0 px-4 pt-2 pb-4">
         <ThreadScrollToBottom />
         <Composer />
       </div>
