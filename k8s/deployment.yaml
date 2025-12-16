@@ -29,4 +29,14 @@ spec:
           env:
             - name: NODE_ENV
               value: "production"
+            - name: MACHINA_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: machina-app-secrets
+                  key: MACHINA_API_KEY
+            - name: MACHINA_API_URL
+              valueFrom:
+                secretKeyRef:
+                  name: machina-app-secrets
+                  key: MACHINA_API_URL
 
