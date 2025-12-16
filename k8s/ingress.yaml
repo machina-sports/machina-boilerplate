@@ -4,10 +4,10 @@ metadata:
   name: machina-frontend-boilerplate
   namespace: default
   annotations:
-    kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/force-ssl-redirect: 'true'
     nginx.ingress.kubernetes.io/ssl-redirect: 'true'
 spec:
+  ingressClassName: nginx
   tls:
     - hosts:
         - machina-frontend-boilerplate.org.machina.gg

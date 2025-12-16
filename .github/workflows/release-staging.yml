@@ -44,6 +44,9 @@ jobs:
           sed -i "s|REPLACE_WITH_REGISTRY_URL|${{ secrets.REGISTRY_URL }}|g" k8s/deployment.yaml
           sed -i "s|:latest|:${{ env.IMAGE_TAG }}|g" k8s/deployment.yaml
 
+          # Clean up any existing ingress in other namespaces to avoid conflicts
+          kubectl delete ingress ${{ env.APP_NAME }} -n machina-frontend-boilerplate --ignore-not-found=true
+
           # Apply Kubernetes manifests (creates or updates resources)
           kubectl apply -f k8s/deployment.yaml -n ${{ env.NAMESPACE }}
           kubectl apply -f k8s/service.yaml -n ${{ env.NAMESPACE }}
