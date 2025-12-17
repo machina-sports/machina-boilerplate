@@ -1,5 +1,4 @@
 import ClientBaseService from '@/libs/client/base.service';
-import { machinaApiClient } from '@/libs/client/machina-api.client';
 import type {
   Workflow,
   Agent,
