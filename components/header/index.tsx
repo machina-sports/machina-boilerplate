@@ -19,7 +19,7 @@ const Header = ({ handleCopy, copied }: HeaderProps) => {
         className="h-12 w-auto md:h-16"
       />
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+        <h1 className="text-3xl font-bold tracking-tight text-[#ff6d00] sm:text-4xl">
           Machina Boilerplate Development Tips
         </h1>
         <p className="text-lg text-zinc-500 dark:text-zinc-400">

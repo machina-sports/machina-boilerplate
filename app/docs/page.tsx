@@ -18,7 +18,7 @@ async function DocsPage() {
             <div className="flex items-center gap-4">
               <Link href="/">
                 <Image
-                  src="/logo-grey.webp"
+                  src="/machina-logo-dark.svg"
                   alt="Machina Sports logo"
                   width={0}
                   height={0}
