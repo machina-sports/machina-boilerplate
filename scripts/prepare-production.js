@@ -3,6 +3,9 @@
 /**
  * Script to prepare boilerplate for production use
  * Removes example files and dependencies from the project
+ *
+ * NOTE: Code references (imports, providers) should be removed manually
+ * to avoid breaking the application. This script only handles files and dependencies.
  */
 
 /* eslint-disable @typescript-eslint/no-require-imports */
@@ -75,6 +78,27 @@ if (hasChanges) {
   console.log('\n⚠️  Run "npm install" to update node_modules');
 } else {
   console.log('\nℹ️  No dependency changes needed');
+}
+
+// Show manual steps for code cleanup
+if (config.codeReferencesToRemove) {
+  console.log('\n📋 Manual cleanup required:');
+  console.log('   The following code references should be removed manually:\n');
+
+  Object.entries(config.codeReferencesToRemove).forEach(([filePath, references]) => {
+    console.log(`   📄 ${filePath}:`);
+    references.forEach((ref) => {
+      if (ref.import) {
+        console.log(`      - Remove import: ${ref.import}`);
+      }
+      if (ref.usage) {
+        console.log(`      - Remove usage: ${ref.usage}`);
+      }
+    });
+    console.log('');
+  });
+
+  console.log('   ⚠️  Removing these manually ensures your app continues to work correctly.');
 }
 
 console.log('\n✨ Production preparation complete!');

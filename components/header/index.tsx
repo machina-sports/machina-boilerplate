@@ -10,7 +10,7 @@ const Header = ({ handleCopy, copied }: HeaderProps) => {
   return (
     <div className="flex max-w-3xl flex-col items-center gap-6 text-center">
       <Image
-        src="/logo-grey.webp"
+        src="/machina-logo-dark.svg"
         alt="Machina Sports logo"
         width={0}
         height={0}

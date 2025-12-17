@@ -1,7 +1,46 @@
 {
-  "exampleFiles": ["app/page.tsx", "app/docs", "app/redux-demo", "app/components", "README.md"],
+  "exampleFiles": [
+    "app/page.tsx",
+    "app/docs",
+    "app/redux-demo",
+    "app/deploy",
+    "app/components",
+    "components/header",
+    "components/footer",
+    "providers/sample",
+    "README.md",
+    "ASSISTANT_SETUP.md",
+    "MACHINA_INTEGRATION.md",
+    "TESTING_GUIDE.md",
+    "TEST_QUESTIONS.md",
+    "ENV_SETUP.md",
+    "ENV_EXAMPLE_LOCAL",
+    "ENV_EXAMPLE_PRODUCTION",
+    "scripts/test-gemini.js",
+    "lib/readme.ts"
+  ],
   "exampleDependencies": {
     "dependencies": ["react-markdown", "react-syntax-highlighter"],
     "devDependencies": ["@types/react-syntax-highlighter"]
+  },
+  "codeReferencesToRemove": {
+    "providers/provider.tsx": [
+      {
+        "import": "import { SampleProvider } from '@/providers/sample/provider';",
+        "usage": "<SampleProvider>"
+      }
+    ],
+    "store/index.ts": [
+      {
+        "import": "import SampleReducer from '@/providers/sample/reducer';",
+        "usage": "sample: SampleReducer.reducer,"
+      }
+    ],
+    "app/layout.tsx": [
+      {
+        "import": "import Footer from '@/components/footer';",
+        "usage": "<Footer />"
+      }
+    ]
   }
 }
