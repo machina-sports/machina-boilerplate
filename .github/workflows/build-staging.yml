@@ -73,8 +73,11 @@ jobs:
           kubectl apply -f k8s/service.yaml -n ${{ env.NAMESPACE }}
           kubectl apply -f k8s/ingress.yaml -n ${{ env.NAMESPACE }}
 
-          # Wait for rollout to complete
-          kubectl rollout status deployment/${{ env.DEPLOYMENT_NAME }} -n ${{ env.NAMESPACE }}
+          # Delete old pods to force immediate rollout
+          kubectl delete pods -l app=${{ env.APP_NAME }} -n ${{ env.NAMESPACE }} --field-selector=status.phase=Running --grace-period=0 --force 2>/dev/null || true
+
+          # Wait for rollout to complete (with timeout)
+          kubectl rollout status deployment/${{ env.DEPLOYMENT_NAME }} -n ${{ env.NAMESPACE }} --timeout=5m
 
       - name: Post Login to Azure
         if: always()
