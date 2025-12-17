@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { setMessage } from '@/providers/sample/reducer';
+import { setMessage, clearMessage } from '@/providers/sample/reducer';
 import { useAppDispatch } from '@/store/dispatch';
 import { useAppSelector } from '@/store/useState';
 
@@ -82,6 +82,16 @@ export default function Home() {
             }}
           >
             Reset input
+          </Button>
+          <Button
+            variant="outline"
+            type="button"
+            onClick={() => {
+              dispatch(clearMessage());
+              // useEffect will sync the input value automatically
+            }}
+          >
+            Clear state
           </Button>
         </div>
       </section>
