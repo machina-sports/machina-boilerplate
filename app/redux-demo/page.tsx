@@ -24,7 +24,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-center gap-10 bg-zinc-100 px-6 py-16 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50">
       <div className="flex flex-col items-center gap-4 text-center sm:max-w-3xl sm:text-left">
         <Image
-          src="/logo-grey.webp"
+          src="/machina-logo-dark.svg"
           alt="Machina Sports logo"
           width={0}
           height={0}
@@ -34,10 +34,10 @@ export default function Home() {
         />
         <div className="flex items-center gap-4">
           <div className="flex flex-col items-center sm:items-start">
-            <p className="text-xs tracking-[0.2em] text-zinc-500 uppercase dark:text-zinc-400">
+            <p className="text-xs tracking-[0.2em] text-[#ff6d00] uppercase dark:text-zinc-400">
               Machina Boilerplate
             </p>
-            <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+            <h1 className="text-3xl font-semibold tracking-tight text-[#ff6d00] sm:text-4xl">
               Next.js 16 + Redux Toolkit + Tailwind 4
             </h1>
           </div>

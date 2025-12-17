@@ -33,7 +33,17 @@ if (fs.existsSync(gitignorePath)) {
 
     let updatedGitignore = beforeSection;
     if (nextSectionStart !== -1 && nextSectionStart < afterSection.length) {
-      updatedGitignore += afterSection.substring(nextSectionStart);
+      // Find the end of the boilerplate section (before next section or end of file)
+      const sectionEnd = afterSection.indexOf('\n', nextSectionStart);
+      if (sectionEnd !== -1) {
+        updatedGitignore += afterSection.substring(sectionEnd);
+      }
+    } else {
+      // No next section, remove everything after separator including trailing newline
+      const sectionEnd = afterSection.indexOf('\n\n');
+      if (sectionEnd !== -1) {
+        updatedGitignore += afterSection.substring(sectionEnd + 1);
+      }
     }
 
     fs.writeFileSync(gitignorePath, updatedGitignore, 'utf-8');
@@ -91,4 +101,7 @@ if (hasChanges) {
 }
 
 console.log('\n✨ Development mode restored!');
-console.log('📝 Example files are now tracked by git\n');
+console.log('📝 Example files are now tracked by git');
+console.log(
+  '💡 Note: If you manually removed code references, you may need to restore them manually.\n'
+);

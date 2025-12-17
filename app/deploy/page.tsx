@@ -154,7 +154,7 @@ const DeployPage = () => {
       {/* Header Section */}
       <div className="flex max-w-3xl flex-col items-center gap-6 text-center">
         <Image
-          src="/logo-grey.webp"
+          src="/machina-logo-dark.svg"
           alt="Machina Sports logo"
           width={0}
           height={0}
@@ -163,7 +163,9 @@ const DeployPage = () => {
           className="h-12 w-auto md:h-16"
         />
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Deployment Guide</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-[#ff6d00] sm:text-4xl">
+            Deployment Guide
+          </h1>
           <p className="text-lg text-zinc-500 dark:text-zinc-400">
             Complete guide to setting up CI/CD workflows for new Machina Frontend applications.
           </p>

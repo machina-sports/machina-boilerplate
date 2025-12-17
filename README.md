@@ -178,11 +178,24 @@ This will:
 
 **Example files that will be ignored:**
 
-- `app/page.tsx` (example home page)
+- `app/page.tsx` (example home page with development tips)
 - `app/docs/` (documentation page)
 - `app/redux-demo/` (Redux demo page)
-- `app/components/` (example components)
-- `README.md` (this file)
+- `app/deploy/` (deployment guide page)
+- `app/components/` (example tip components)
+- `components/header/` (example header component)
+- `components/footer/` (example footer component)
+- `providers/sample/` (example Redux provider)
+- `README.md` and documentation files (`.md` files)
+- `ENV_EXAMPLE_*` (example environment files)
+- `scripts/test-gemini.js` (testing script)
+
+**Note:** After running `prepare:production`, you'll need to manually remove code references:
+
+- Remove `SampleProvider` from `providers/provider.tsx`
+- Remove `SampleReducer` from `store/index.ts`
+- Remove `Footer` from `app/layout.tsx` (if you don't want it)
+- Create your own `app/page.tsx` home page
 
 ### Restore Development Mode
 
@@ -204,6 +217,37 @@ The app supports multi-brand deployment via `NEXT_PUBLIC_BRAND`.
 - **Config**: `config/brands/index.ts`
 - **Usage**: `useBrand()` hook or `BrandProvider`.
 - **CSS**: CSS variables are injected automatically based on the selected brand.
+
+---
+
+## 🔒 Security
+
+This boilerplate follows security best practices to protect API keys and sensitive data.
+
+### Key Security Features
+
+- ✅ **BFF Pattern**: All external API calls go through Next.js API routes (`/app/api/*`)
+- ✅ **Server-Side Keys**: API keys (`MACHINA_API_KEY`, `GEMINI_API_KEY`) are server-side only
+- ✅ **No Client Exposure**: Sensitive keys never reach the browser
+- ✅ **Environment Variables**: `.env` files are gitignored
+
+### Security Checklist
+
+Before deploying:
+
+- [ ] Verify no `NEXT_PUBLIC_*` prefix for sensitive API keys
+- [ ] All external API calls use `/api/*` proxy routes
+- [ ] `.env` files are not committed to git
+- [ ] Production environment variables are set securely (GitHub Secrets, etc.)
+
+### Important Notes
+
+⚠️ **Never use `NEXT_PUBLIC_MACHINA_API_KEY` or `NEXT_PUBLIC_GEMINI_API_KEY`**
+
+- These would expose keys to the client
+- Always use server-side environment variables: `MACHINA_API_KEY`, `GEMINI_API_KEY`
+
+For detailed security review, see [`scripts/SECURITY_REVIEW.md`](scripts/SECURITY_REVIEW.md).
 
 ---
 

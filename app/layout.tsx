@@ -11,6 +11,7 @@ import AssistantRuntimeProviderWrapper from '@/contexts/assistant-runtime-provid
 import { ChatOpenProvider } from '@/contexts/chat-open-context';
 import { FloatingChatButton } from '@/components/assistant-ui/floating-chat-button';
 import { ChatModal } from '@/components/assistant-ui/chat-modal';
+import Footer from '@/components/footer';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -44,6 +45,7 @@ export default function RootLayout({
                 <FloatingChatButton />
                 <ChatModal />
                 {children}
+                <Footer />
               </ChatOpenProvider>
             </AssistantRuntimeProviderWrapper>
           </Providers>
