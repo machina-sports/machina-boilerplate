@@ -48,21 +48,21 @@ export default function Home() {
         </p>
       </div>
 
-      <section className="flex w-full max-w-2xl flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <section className="flex w-full max-w-2xl flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:gap-4 sm:p-6 dark:border-zinc-800 dark:bg-zinc-900">
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-200">
+          <label className="text-xs font-medium text-zinc-700 sm:text-sm dark:text-zinc-200">
             Message in global state
           </label>
           <input
-            className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-zinc-900 transition outline-none focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-50"
+            className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-900 transition outline-none focus:border-zinc-400 sm:text-base dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-50"
             value={value}
             onChange={(event) => setValue(event.target.value)}
           />
         </div>
 
-        <div className="flex items-center justify-between rounded-xl bg-zinc-100 px-4 py-3 text-sm font-medium text-zinc-800 dark:bg-zinc-800 dark:text-zinc-100">
-          <span>Current state:</span>
-          <span className="truncate font-semibold">{message}</span>
+        <div className="flex flex-col gap-2 rounded-xl bg-zinc-100 px-4 py-3 text-sm font-medium text-zinc-800 sm:flex-row sm:items-center sm:justify-between sm:gap-0 dark:bg-zinc-800 dark:text-zinc-100">
+          <span className="text-xs sm:text-sm">Current state:</span>
+          <span className="font-semibold break-words sm:truncate sm:text-sm">{message}</span>
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row">
