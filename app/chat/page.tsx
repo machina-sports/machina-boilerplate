@@ -65,11 +65,15 @@ export default function ChatPage() {
       )}
     >
       {/* Header */}
-      <header className="flex h-14 flex-shrink-0 items-center justify-between border-b border-zinc-200 bg-white px-3 md:h-16 md:px-4 dark:border-zinc-800 dark:bg-zinc-900">
+      <header className="flex h-14 flex-shrink-0 items-center justify-between border-b border-zinc-200 bg-white/80 px-3 backdrop-blur-md md:h-16 md:px-4 dark:border-zinc-800 dark:bg-zinc-950/80">
         <div className="flex items-center gap-2 md:gap-4">
           {!isFullscreen && (
             <Link href="/">
-              <Button variant="ghost" size="icon" className="h-8 w-8 md:h-9 md:w-9">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-zinc-500 hover:text-zinc-900 md:h-9 md:w-9 dark:text-zinc-400 dark:hover:text-zinc-100"
+              >
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
@@ -96,7 +100,7 @@ export default function ChatPage() {
       <div className="flex flex-1 overflow-hidden">
         {/* Chat Area */}
         <main className="chat-content-enter flex-1 overflow-hidden">
-          <div className="h-full bg-white dark:bg-zinc-900">
+          <div className="h-full bg-white dark:bg-zinc-950">
             <Thread />
           </div>
         </main>

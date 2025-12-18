@@ -50,7 +50,7 @@ export function ChatControls() {
         variant="ghost"
         size="icon"
         onClick={handleNewChat}
-        className="h-9 w-9"
+        className="h-9 w-9 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
         title="New Chat"
       >
         <Plus className="h-4 w-4" />
@@ -59,7 +59,12 @@ export function ChatControls() {
       {/* Theme Selector */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-9 w-9" title="Change theme">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+            title="Change theme"
+          >
             {themeIcons[theme]}
           </Button>
         </DropdownMenuTrigger>
@@ -80,7 +85,12 @@ export function ChatControls() {
       {/* Layout Selector */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-9 w-9" title="Change layout">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+            title="Change layout"
+          >
             {layoutIcons[layout]}
           </Button>
         </DropdownMenuTrigger>
@@ -103,7 +113,7 @@ export function ChatControls() {
         variant="ghost"
         size="icon"
         onClick={() => dispatch(toggleFullscreen())}
-        className="h-9 w-9"
+        className="h-9 w-9 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
         title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
       >
         {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
