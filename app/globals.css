@@ -145,15 +145,6 @@
   }
 }
 
-.aui-thread-viewport {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  scroll-behavior: smooth;
-  /* Scrollbar personalizado com tailwind-scrollbar */
-  scrollbar-width: thin;
-  scrollbar-color: rgb(209 213 219) transparent; /* gray-300 */
-}
-
 .dark .aui-thread-viewport {
   scrollbar-color: rgb(75 85 99) transparent; /* gray-600 */
 }
