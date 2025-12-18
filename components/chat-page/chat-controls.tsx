@@ -44,16 +44,16 @@ export function ChatControls() {
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1">
       {/* New Chat */}
       <Button
-        variant="ghost"
-        size="icon"
+        variant="default"
         onClick={handleNewChat}
-        className="h-9 w-9 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+        className="mr-4 h-9 w-auto"
         title="New Chat"
       >
         <Plus className="h-4 w-4" />
+        <span className="text-sm font-medium">New Chat</span>
       </Button>
 
       {/* Theme Selector */}
