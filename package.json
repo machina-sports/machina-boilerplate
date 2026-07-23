@@ -8,7 +8,7 @@
     "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "prepare:production": "node scripts/prepare-production.js",
     "prepare:development": "node scripts/prepare-development.js",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
