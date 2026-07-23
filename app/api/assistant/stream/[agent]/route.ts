@@ -12,7 +12,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // 5 minutes for streaming
 
-const MACHINA_API_URL = process.env.MACHINA_API_URL || 'https://api-staging.machina.gg';
+const MACHINA_API_URL = process.env.MACHINA_API_URL || 'http://127.0.0.1:3001';
 const MACHINA_API_KEY = process.env.MACHINA_API_KEY || '';
 
 interface RouteContext {

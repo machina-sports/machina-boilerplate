@@ -1,14 +1,14 @@
 {
-  "name": "machina-frontend-boilerplate",
+  "name": "{{APP_SLUG}}",
   "version": "0.1.0",
   "private": true,
-  "description": "Machina boilerplate for new Next.js frontends with Redux, Tailwind, and typed tooling.",
+  "description": "{{APP_NAME}} — a deployable Machina AI app with chat and pod integration.",
   "license": "MIT",
   "scripts": {
     "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "prepare:production": "node scripts/prepare-production.js",
     "prepare:development": "node scripts/prepare-development.js",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",

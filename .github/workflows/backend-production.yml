@@ -1,0 +1,27 @@
+name: Machina pod production
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Machina Client API version
+        default: beta
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install machina-cli
+      - name: Deploy the project pod
+        env:
+          MACHINA_API_KEY: ${{ secrets.MACHINA_API_KEY }}
+        run: >-
+          machina deploy start
+          --org "${{ vars.MACHINA_ORG_ID }}"
+          --version "${{ inputs.version }}"
