@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
 
-const MACHINA_API_URL = process.env.MACHINA_API_URL || 'https://api-staging.machina.gg';
+const MACHINA_API_URL = process.env.MACHINA_API_URL || 'http://127.0.0.1:3001';
 const MACHINA_API_KEY = process.env.MACHINA_API_KEY || '';
 
 export async function POST(req: NextRequest) {
@@ -83,9 +83,17 @@ export async function POST(req: NextRequest) {
               if (line.trim()) {
                 try {
                   const parsed = JSON.parse(line);
-                  console.log('[Thread Stream] Chunk type:', parsed.type, 'has metadata:', !!parsed.metadata);
+                  console.log(
+                    '[Thread Stream] Chunk type:',
+                    parsed.type,
+                    'has metadata:',
+                    !!parsed.metadata
+                  );
                   if (parsed.type === 'start' || parsed.type === 'done') {
-                    console.log('[Thread Stream] Important chunk:', JSON.stringify(parsed, null, 2));
+                    console.log(
+                      '[Thread Stream] Important chunk:',
+                      JSON.stringify(parsed, null, 2)
+                    );
                   }
                 } catch (e) {
                   // Not JSON, skip logging

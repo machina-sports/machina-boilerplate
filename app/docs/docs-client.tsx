@@ -7,8 +7,7 @@ export default function DocsClient() {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    const gitCloneCommand =
-      'git clone git@github.com:machina-sports/machina-frontend-boilerplate.git';
+    const gitCloneCommand = 'machina create ai-app "My AI App"';
     navigator.clipboard.writeText(gitCloneCommand).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);

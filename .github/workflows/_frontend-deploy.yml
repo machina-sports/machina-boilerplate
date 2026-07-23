@@ -1,0 +1,103 @@
+name: Frontend deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+
+  aws:
+    if: vars.DEPLOY_TARGET == 'aws'
+    needs: verify
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Build and push image
+        env:
+          IMAGE: ${{ steps.ecr.outputs.registry }}/${{ vars.AWS_ECR_REPOSITORY }}:${{ github.sha }}
+        run: |
+          docker build -t "$IMAGE" .
+          docker push "$IMAGE"
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
+      - name: Download task definition
+        env:
+          TASK_DEFINITION: ${{ inputs.environment == 'staging' && vars.AWS_ECS_TASK_DEFINITION_STAGING || vars.AWS_ECS_TASK_DEFINITION_PRODUCTION }}
+        run: >-
+          aws ecs describe-task-definition
+          --task-definition "$TASK_DEFINITION"
+          --query taskDefinition > task-definition.json
+      - id: task
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ vars.AWS_ECS_CONTAINER_NAME }}
+          image: ${{ env.IMAGE }}
+      - uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task.outputs.task-definition }}
+          cluster: ${{ inputs.environment == 'staging' && vars.AWS_ECS_CLUSTER_STAGING || vars.AWS_ECS_CLUSTER_PRODUCTION }}
+          service: ${{ inputs.environment == 'staging' && vars.AWS_ECS_SERVICE_STAGING || vars.AWS_ECS_SERVICE_PRODUCTION }}
+          wait-for-service-stability: true
+
+  azure:
+    if: vars.DEPLOY_TARGET == 'azure'
+    needs: verify
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Build and push image
+        env:
+          IMAGE: ${{ vars.AZURE_ACR_LOGIN_SERVER }}/{{APP_SLUG}}:${{ github.sha }}
+        run: |
+          az acr login --name "${{ vars.AZURE_ACR_NAME }}"
+          docker build -t "$IMAGE" .
+          docker push "$IMAGE"
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
+      - name: Deploy to AKS
+        env:
+          CLUSTER: ${{ inputs.environment == 'staging' && vars.AZURE_AKS_CLUSTER_STAGING || vars.AZURE_AKS_CLUSTER_PRODUCTION }}
+          NAMESPACE: ${{ inputs.environment == 'staging' && vars.AZURE_AKS_NAMESPACE_STAGING || vars.AZURE_AKS_NAMESPACE_PRODUCTION }}
+          RESOURCE_GROUP: ${{ inputs.environment == 'staging' && vars.AZURE_AKS_RESOURCE_GROUP_STAGING || vars.AZURE_AKS_RESOURCE_GROUP_PRODUCTION }}
+        run: |
+          az aks get-credentials --resource-group "$RESOURCE_GROUP" --name "$CLUSTER" --overwrite-existing
+          kubectl -n "$NAMESPACE" set image deployment/{{APP_SLUG}} {{APP_SLUG}}="$IMAGE"
+          kubectl -n "$NAMESPACE" rollout status deployment/{{APP_SLUG}} --timeout=5m
+
+  target-check:
+    if: vars.DEPLOY_TARGET != 'aws' && vars.DEPLOY_TARGET != 'azure'
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Set repository variable DEPLOY_TARGET to aws or azure."
+          exit 1

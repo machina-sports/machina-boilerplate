@@ -1,0 +1,13 @@
+name: Frontend production
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/_frontend-deploy.yml
+    with:
+      environment: production
+    secrets: inherit
