@@ -24,7 +24,7 @@ const brands: Record<string, BrandConfig> = {
     id: 'default',
     language: 'en-US',
     content: {
-      title: 'Machina Boilerplate Frontend',
+      title: '{{APP_NAME}}',
       description: 'Next.js + Redux + Tailwind boilerplate for new projects.',
       favicon: '/favicon.ico',
       ogImage: '/og-image.png',
