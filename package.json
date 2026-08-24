@@ -2,7 +2,7 @@
   "name": "{{APP_SLUG}}",
   "version": "0.1.0",
   "private": true,
-  "description": "{{APP_NAME}} — a deployable Machina AI app with chat and pod integration.",
+  "description": "{{APP_NAME}} \u2014 a deployable Machina AI app with chat and pod integration.",
   "license": "MIT",
   "scripts": {
     "dev": "next dev --turbo",
@@ -15,11 +15,9 @@
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\""
   },
   "dependencies": {
-    "@ai-sdk/google": "^2.0.46",
     "@assistant-ui/react": "^0.11.51",
     "@assistant-ui/react-ai-sdk": "^1.1.19",
     "@assistant-ui/react-markdown": "^0.11.8",
-    "@google/generative-ai": "^0.24.1",
     "@radix-ui/react-avatar": "^1.1.11",
     "@radix-ui/react-collapsible": "^1.1.12",
     "@radix-ui/react-dialog": "^1.1.15",
