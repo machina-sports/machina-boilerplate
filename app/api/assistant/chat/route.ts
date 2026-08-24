@@ -27,11 +27,11 @@
 import { createUIMessageStream, createUIMessageStreamResponse } from 'ai';
 import { NextResponse } from 'next/server';
 
+import { MACHINA_API_URL, podAuthHeaders, podConfigured } from '@/lib/pod-auth';
+
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // streamed agent runs can be slow
 
-const MACHINA_API_URL = process.env.MACHINA_API_URL || '';
-const MACHINA_API_KEY = process.env.MACHINA_API_KEY || '';
 const MACHINA_AGENT = process.env.MACHINA_AGENT || 'machina-assistant-executor';
 
 type IncomingMessage = {
@@ -91,11 +91,11 @@ async function* ndjsonLines(body: ReadableStream<Uint8Array>) {
 }
 
 export async function POST(req: Request) {
-  if (!MACHINA_API_URL || !MACHINA_API_KEY) {
+  if (!podConfigured()) {
     return NextResponse.json(
       {
         error:
-          'Machina pod is not configured. Set MACHINA_API_URL and MACHINA_API_KEY in .env.local (see .env.example).',
+          'Machina pod is not configured. Set MACHINA_API_URL plus MACHINA_API_KEY (pod API key) or MACHINA_PROJECT_TOKEN in .env.local (see .env.example).',
       },
       { status: 503 }
     );
@@ -119,9 +119,15 @@ export async function POST(req: Request) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Api-Token': MACHINA_API_KEY,
+        ...podAuthHeaders(),
       },
-      body: JSON.stringify({ messages }),
+      // `messages` top-level is what the executor hands the LLM; the copy
+      // under `context-agent` is what agent workflow CONDITIONS and INPUTS
+      // evaluate over (client-api AgentContext seeds its state from the
+      // agent doc's `context` plus the request's `context-agent` — never
+      // from top-level request fields). Omit either and the agent silently
+      // skips every workflow.
+      body: JSON.stringify({ messages, 'context-agent': { messages } }),
     }
   );
 
@@ -147,7 +153,16 @@ export async function POST(req: Request) {
         }
       };
       for await (const line of ndjsonLines(podBody)) {
-        const content = typeof line.content === 'string' ? line.content : '';
+        const metadata = (line as { metadata?: { content?: unknown } }).metadata;
+        // Incremental chunks carry text in `content`; the final `done` event
+        // carries the full response inside `metadata.content` (its own
+        // top-level `content` is empty on real pods).
+        const content =
+          typeof line.content === 'string' && line.content
+            ? line.content
+            : typeof metadata?.content === 'string'
+              ? metadata.content
+              : '';
         if (line.type === 'content' && content) {
           start();
           streamedAny = true;

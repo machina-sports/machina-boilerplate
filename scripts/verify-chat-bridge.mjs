@@ -29,7 +29,7 @@ function ndjson(type, content, extra = {}) {
 }
 
 function serve() {
-  const seen = { token: null, agent: null, messages: null };
+  const seen = { token: null, agent: null, messages: null, contextAgentMessages: null };
   const server = http.createServer((req, res) => {
     if (req.method === 'GET' && req.url === '/__seen') {
       res.writeHead(200, { 'content-type': 'application/json' });
@@ -54,7 +54,9 @@ function serve() {
       seen.token = req.headers['x-api-token'] || null;
       seen.agent = decodeURIComponent(match[1]);
       try {
-        seen.messages = JSON.parse(body).messages;
+        const parsed = JSON.parse(body);
+        seen.messages = parsed.messages;
+        seen.contextAgentMessages = parsed['context-agent']?.messages?.length ?? null;
       } catch {
         seen.messages = null;
       }
@@ -66,7 +68,7 @@ function serve() {
       res.writeHead(200, { 'content-type': 'application/x-ndjson', 'x-task-id': 'fake-task-1' });
       res.write(ndjson('start', ''));
       for (const chunk of REPLY_CHUNKS) res.write(ndjson('content', chunk, { partial: true }));
-      res.write(ndjson('done', REPLY_CHUNKS.join('')));
+      res.write(ndjson('done', '', { content: REPLY_CHUNKS.join(''), suggestions: [] }));
       res.end();
     });
   });
@@ -106,6 +108,11 @@ async function check() {
     seen.messages.at(-1)?.content !== 'Say hello through the pod.'
   ) {
     failures.push(`pod saw messages ${JSON.stringify(seen.messages)}`);
+  }
+  if (seen.contextAgentMessages !== seen.messages?.length) {
+    failures.push(
+      'request did not mirror messages under context-agent (agent conditions would skip)'
+    );
   }
   if (failures.length > 0) {
     console.error('FAIL:\n  - ' + failures.join('\n  - '));
