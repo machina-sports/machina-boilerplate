@@ -10,6 +10,7 @@ NEXT_PUBLIC_API_BASE_URL="http://localhost:3000/api"
 MACHINA_API_URL=https://your-project.org.machina.gg
 MACHINA_AGENT=machina-assistant-executor
 
-# Set either a pod API key or a project token.
+# Set either a pod API key (sent as X-Api-Token) or a project token minted by
+# `machina login` (sent as X-Project-Token).
 MACHINA_API_KEY=
 # MACHINA_PROJECT_TOKEN=

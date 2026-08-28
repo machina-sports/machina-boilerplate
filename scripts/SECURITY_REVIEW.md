@@ -6,7 +6,8 @@
 
 - API routes read `MACHINA_API_KEY` or `MACHINA_PROJECT_TOKEN` only on the server.
 - `MACHINA_API_KEY` is sent to the pod as `X-Api-Token`.
-- `MACHINA_PROJECT_TOKEN` is sent as `Authorization: Bearer <token>`.
+- `MACHINA_PROJECT_TOKEN` is sent as `X-Project-Token`.
+- No pod request carries an `Authorization` header; the Machina middleware reads only the two headers above.
 - Sensitive values never use a `NEXT_PUBLIC_` prefix.
 - `.env` and `.env*.local` are ignored by git.
 

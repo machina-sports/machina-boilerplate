@@ -46,7 +46,8 @@ npm run verify:chat-bridge
 The command fails unless:
 
 - an API key reaches the pod only as `X-Api-Token`;
-- a project token reaches the pod only as `Authorization: Bearer <token>`;
+- a project token reaches the pod only as `X-Project-Token`;
+- neither credential mode sends an `Authorization` header;
 - both proxy paths preserve the pod stream;
 - chat messages are mirrored under `context-agent`.
 

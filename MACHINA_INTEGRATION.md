@@ -119,7 +119,7 @@ MACHINA_API_KEY=your_pod_api_key
 # MACHINA_PROJECT_TOKEN=your_project_token
 ```
 
-`MACHINA_API_KEY` usa `X-Api-Token`; `MACHINA_PROJECT_TOKEN` usa `Authorization: Bearer <token>`. Nunca exponha essas credenciais com `NEXT_PUBLIC_`.
+`MACHINA_API_KEY` usa `X-Api-Token`; `MACHINA_PROJECT_TOKEN` usa `X-Project-Token`. Nenhuma chamada ao pod usa header `Authorization`. Nunca exponha essas credenciais com `NEXT_PUBLIC_`.
 
 ### 2. Buscar Agents
 

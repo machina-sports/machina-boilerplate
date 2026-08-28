@@ -4,7 +4,7 @@ The same repository deploys to AWS ECS or Azure AKS. Select the provider with th
 
 ## Common
 
-- Secret `MACHINA_API_KEY` or `MACHINA_PROJECT_TOKEN`: server-side credential used by the app. API keys use `X-Api-Token`; project tokens use `Authorization: Bearer`.
+- Secret `MACHINA_API_KEY` or `MACHINA_PROJECT_TOKEN`: server-side credential used by the app. API keys use `X-Api-Token`; project tokens use `X-Project-Token`. Neither is ever sent on the `Authorization` header.
 - Variable `MACHINA_ORG_ID`: organization whose Machina pod is deployed.
 - Runtime variables/secrets in the ECS task definition or AKS Deployment: `MACHINA_API_URL`, `MACHINA_AGENT`, and either `MACHINA_API_KEY` or `MACHINA_PROJECT_TOKEN`.
 

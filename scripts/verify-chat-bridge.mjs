@@ -17,7 +17,8 @@ const API_KEY = process.env.MACHINA_API_KEY || 'test-api-key';
 const PROJECT_TOKEN = process.env.MACHINA_PROJECT_TOKEN || 'test-project-token';
 const AGENT = process.env.MACHINA_AGENT || 'test-agent';
 const REPLY_CHUNKS = ['The Machina pod ', 'answered this ', 'through the bridge.'];
-const OBSOLETE_PROJECT_HEADER = ['x-project', '-token'].join('');
+const API_KEY_HEADER = 'x-api-token';
+const PROJECT_TOKEN_HEADER = 'x-project-token';
 
 function ndjson(type, content, extra = {}) {
   return `${JSON.stringify({ type, content, metadata: extra, timestamp: Date.now() / 1000, chunk_index: 0 })}\n`;
@@ -60,8 +61,8 @@ function createFakePod() {
       requests.push({
         agent: decodeURIComponent(match[1]),
         authorization: req.headers.authorization || null,
-        xApiToken: req.headers['x-api-token'] || null,
-        xProjectToken: req.headers[OBSOLETE_PROJECT_HEADER] || null,
+        xApiToken: req.headers[API_KEY_HEADER] || null,
+        xProjectToken: req.headers[PROJECT_TOKEN_HEADER] || null,
         body: parsed,
       });
 
@@ -92,26 +93,33 @@ async function resetFakePod() {
   await fetch(`http://127.0.0.1:${POD_PORT}/__reset`, { method: 'POST' });
 }
 
+/**
+ * The canonical machina-client-api contract: a pod API key travels as
+ * X-Api-Token, a project JWT travels as X-Project-Token, and neither mode
+ * ever sends an Authorization header — the middleware does not read it.
+ */
 function expectedAuth(mode) {
   return mode === 'project-token'
-    ? { authorization: `Bearer ${PROJECT_TOKEN}`, xApiToken: null }
-    : { authorization: null, xApiToken: API_KEY };
+    ? { xApiToken: null, xProjectToken: PROJECT_TOKEN }
+    : { xApiToken: API_KEY, xProjectToken: null };
 }
 
 function assertRequest(request, mode, failures) {
   const expected = expectedAuth(mode);
-  if (request.authorization !== expected.authorization) {
-    failures.push(
-      `${mode}: Authorization ${JSON.stringify(request.authorization)} != ${JSON.stringify(expected.authorization)}`
-    );
-  }
   if (request.xApiToken !== expected.xApiToken) {
     failures.push(
       `${mode}: X-Api-Token ${JSON.stringify(request.xApiToken)} != ${JSON.stringify(expected.xApiToken)}`
     );
   }
-  if (request.xProjectToken !== null) {
-    failures.push(`${mode}: obsolete project-token header was sent`);
+  if (request.xProjectToken !== expected.xProjectToken) {
+    failures.push(
+      `${mode}: X-Project-Token ${JSON.stringify(request.xProjectToken)} != ${JSON.stringify(expected.xProjectToken)}`
+    );
+  }
+  if (request.authorization !== null) {
+    failures.push(
+      `${mode}: pod received an Authorization header ${JSON.stringify(request.authorization)}; project JWTs belong in X-Project-Token`
+    );
   }
   if (request.agent !== AGENT) failures.push(`${mode}: pod received agent ${request.agent}`);
 

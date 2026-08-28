@@ -20,7 +20,8 @@ Use apenas uma credencial. Se ambas estiverem configuradas, `MACHINA_PROJECT_TOK
 ## Contrato de autenticacao
 
 - `MACHINA_API_KEY` e enviado no header `X-Api-Token`.
-- `MACHINA_PROJECT_TOKEN` e enviado no header `Authorization: Bearer <token>`.
+- `MACHINA_PROJECT_TOKEN` e enviado no header `X-Project-Token`.
+- Nenhuma requisicao ao pod envia header `Authorization`; o middleware nao o le.
 - Nenhuma credencial pode usar o prefixo `NEXT_PUBLIC_`.
 - Use valores e credenciais separados para staging e producao.
 

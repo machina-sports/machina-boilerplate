@@ -92,7 +92,7 @@ POST /api/assistant/workflows 404
 
 **Solução:**
 - Para `MACHINA_API_KEY`, verifique se a API key esta correta; o app envia `X-Api-Token`
-- Para `MACHINA_PROJECT_TOKEN`, verifique se o token esta valido; o app envia `Authorization: Bearer <token>`
+- Para `MACHINA_PROJECT_TOKEN`, verifique se o token esta valido; o app envia `X-Project-Token` (nunca `Authorization`)
 
 ### Modal não abre
 

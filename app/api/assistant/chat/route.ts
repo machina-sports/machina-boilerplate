@@ -15,7 +15,7 @@
  *   client payload — a browser must not be able to point the chat at an
  *   arbitrary agent on the pod.
  * - The pod credential stays server-side. API keys use X-Api-Token and
- *   project tokens use Authorization: Bearer. Nothing NEXT_PUBLIC_ is used.
+ *   project tokens use X-Project-Token. Nothing NEXT_PUBLIC_ is used.
  *
  * This route previously called a hosted LLM directly, which silently
  * required a provider key the template never declared — and meant the

@@ -23,7 +23,7 @@ MACHINA_API_KEY=your_pod_api_key
 # MACHINA_PROJECT_TOKEN=your_project_token
 ```
 
-`MACHINA_API_KEY` is sent as `X-Api-Token`. `MACHINA_PROJECT_TOKEN` is sent as `Authorization: Bearer <token>` and takes precedence when both are set. Never prefix either credential with `NEXT_PUBLIC_`.
+`MACHINA_API_KEY` is sent as `X-Api-Token`. `MACHINA_PROJECT_TOKEN` is sent as `X-Project-Token` and takes precedence when both are set. No pod request carries an `Authorization` header — the Machina middleware does not read one. Never prefix either credential with `NEXT_PUBLIC_`.
 
 ## Run the app
 
@@ -74,7 +74,7 @@ The bridge verifier starts a local fake pod and launches the built app twice. It
 ### 401 or 403 from the pod
 
 - A pod API key must travel as `X-Api-Token`.
-- A project token must travel as `Authorization: Bearer <token>`.
+- A project token must travel as `X-Project-Token`, not on the `Authorization` header.
 - Do not put a project token in `MACHINA_API_KEY`.
 - Rotate the credential if it may have been committed or exposed.
 
