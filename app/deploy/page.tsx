@@ -35,33 +35,33 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Create .env file
-        run: |
-          echo "MACHINA_API_KEY=\${{ vars.MACHINA_API_KEY }}" >> .env
-          echo "MACHINA_CLIENT_URL=\${{ vars.MACHINA_CLIENT_URL }}" >> .env
-          echo "NEXT_PUBLIC_BRAND=\${{ vars.NEXT_PUBLIC_BRAND }}" >> .env
-          echo "NEXT_PUBLIC_APP_NAME=\${{ vars.NEXT_PUBLIC_APP_NAME }}" >> .env
-          echo "NEXT_PUBLIC_API_BASE_URL=\${{ vars.NEXT_PUBLIC_API_BASE_URL }}" >> .env
-          echo "NODE_ENV=production" >> .env
-
       - name: Get tag name as release version
         run: echo "PACKAGE_VERSION=\${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           username: \${{ secrets.DOCKER_USERNAME }}
           password: \${{ secrets.DOCKER_PASSWORD }}
 
+      # The build receives no pod credential. Anything written into the build
+      # context is baked into an image layer, so the pod API key and project
+      # token are injected at runtime from the Kubernetes Secret instead. Only
+      # public NEXT_PUBLIC_* values are build args, because Next.js inlines
+      # those into the client bundle.
       - name: Build and push Docker image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
           push: true
+          build-args: |
+            NEXT_PUBLIC_BRAND=\${{ vars.NEXT_PUBLIC_BRAND }}
+            NEXT_PUBLIC_APP_NAME=\${{ vars.NEXT_PUBLIC_APP_NAME }}
+            NEXT_PUBLIC_API_BASE_URL=\${{ vars.NEXT_PUBLIC_API_BASE_URL }}
           tags: |
-            \${{ secrets.REGISTRY_URL }}/app-name:\${{ env.PACKAGE_VERSION }} \
-            \${{ secrets.REGISTRY_URL }}/app-name:staging-latest `;
+            \${{ secrets.REGISTRY_URL }}/app-name:\${{ env.PACKAGE_VERSION }}
+            \${{ secrets.REGISTRY_URL }}/app-name:staging-latest`;
 
 const RELEASE_WORKFLOW_YAML = `name: Release Staging
 
@@ -206,7 +206,7 @@ const DeployPage = () => {
                 <li>Azure credentials (AZURE_CREDENTIALS)</li>
                 <li>Docker registry credentials (DOCKER_USERNAME, DOCKER_PASSWORD)</li>
                 <li>Registry URL (REGISTRY_URL)</li>
-                <li>API credentials (MACHINA_API_KEY, MACHINA_CLIENT_URL)</li>
+                <li>Machina pod URL, agent, and either MACHINA_API_KEY or MACHINA_PROJECT_TOKEN</li>
               </ul>
             </div>
           </div>
@@ -233,6 +233,8 @@ const DeployPage = () => {
                   REGISTRY_URL
                   <br />
                   AZURE_CREDENTIALS
+                  <br />
+                  MACHINA_API_KEY or MACHINA_PROJECT_TOKEN
                 </code>
               </div>
             </div>
@@ -242,9 +244,9 @@ const DeployPage = () => {
               </h4>
               <div className="rounded-md bg-zinc-50 p-3 dark:bg-zinc-800">
                 <code className="block text-xs text-zinc-800 dark:text-zinc-200">
-                  MACHINA_API_KEY
+                  MACHINA_API_URL
                   <br />
-                  MACHINA_CLIENT_URL
+                  MACHINA_AGENT
                   <br />
                   NEXT_PUBLIC_BRAND
                   <br />
@@ -258,6 +260,21 @@ const DeployPage = () => {
               <p className="text-xs text-blue-800 dark:text-blue-300">
                 <strong>Note:</strong> Secrets are encrypted and only accessible during workflow
                 execution. Variables are visible in workflow logs.
+              </p>
+            </div>
+            <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-3 dark:border-amber-800 dark:bg-amber-900/10">
+              <p className="text-xs text-amber-800 dark:text-amber-300">
+                <strong>Pod credentials are runtime-only.</strong> Never write{' '}
+                <code>MACHINA_API_KEY</code> or <code>MACHINA_PROJECT_TOKEN</code> into a{' '}
+                <code>.env</code> file, a build arg, or anything else the Docker build can read —{' '}
+                <code>COPY . .</code> would bake them into an image layer that ships to the
+                registry, where anyone who can pull the image can read them back. Deliver them to
+                the running container instead: a Kubernetes <code>Secret</code> referenced through{' '}
+                <code>secretKeyRef</code> in <code>k8s/deployment.yaml</code>, or the secrets block
+                of the ECS task definition. Only public <code>NEXT_PUBLIC_*</code> values belong in
+                the build, because Next.js inlines them into the client bundle. The repository ships
+                a <code>.dockerignore</code> that keeps every dotenv variant out of the build
+                context as a second line of defense.
               </p>
             </div>
           </div>
@@ -289,52 +306,7 @@ const DeployPage = () => {
                     onCopy={handleCopy}
                   />
                 </div>
-                <CodeBlock className="language-yaml">
-                  {`name: Build Staging
-
-on:
-  push:
-    tags:
-      - "v.staging-*"
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Setup Git
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Create .env file
-        run: |
-          echo "MACHINA_API_KEY=${'{'}{'{'}vars.MACHINA_API_KEY{'}'}{'}'}" >> .env
-          echo "MACHINA_CLIENT_URL=${'{'}{'{'}vars.MACHINA_CLIENT_URL{'}'}{'}'}" >> .env
-          echo "NEXT_PUBLIC_BRAND=${'{'}{'{'}vars.NEXT_PUBLIC_BRAND{'}'}{'}'}" >> .env
-          echo "NEXT_PUBLIC_APP_NAME=${'{'}{'{'}vars.NEXT_PUBLIC_APP_NAME{'}'}{'}'}" >> .env
-          echo "NEXT_PUBLIC_API_BASE_URL=${'{'}{'{'}vars.NEXT_PUBLIC_API_BASE_URL{'}'}{'}'}" >> .env
-          echo "NODE_ENV=production" >> .env
-
-      - name: Get tag name as release version
-        run: echo "PACKAGE_VERSION=\\\${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: \${'{'}{'{'}} secrets.DOCKER_USERNAME \${'}'}{{'}'}}
-          password: \${'{'}{'{'}} secrets.DOCKER_PASSWORD \${'}'}{{'}'}}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: |
-            \${'{'}{'{'}} secrets.REGISTRY_URL \${'}'}{{'}'}}/app-name:\${PACKAGE_VERSION}
-            \${'{'}{'{'}} secrets.REGISTRY_URL \${'}'}{{'}'}}/app-name:staging-latest`}
-                </CodeBlock>
+                <CodeBlock className="language-yaml">{BUILD_WORKFLOW_YAML}</CodeBlock>
               </div>
             </div>
             <div className="rounded-lg border border-green-200 bg-green-50/50 p-3 dark:border-green-800 dark:bg-green-900/10">

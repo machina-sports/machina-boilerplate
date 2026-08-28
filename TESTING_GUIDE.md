@@ -7,8 +7,12 @@
 Crie `.env.local` na raiz do projeto:
 
 ```bash
-MACHINA_API_URL=https://api-staging.machina.gg
-MACHINA_API_KEY=KCPN6Y5mBL33QBjBQ7C9DWi2NfLyXjoedS6DXa44Z_VQbL3Sb5El7UgT9EvtVGeo3WVXCDsckPLXeLwOTbkOiQ
+MACHINA_API_URL=https://your-project.org.machina.gg
+MACHINA_AGENT=machina-assistant-executor
+
+# Configure uma credencial server-side:
+MACHINA_API_KEY=your_pod_api_key
+# MACHINA_PROJECT_TOKEN=your_project_token
 ```
 
 ### 2. Inicie o Servidor
@@ -76,10 +80,10 @@ POST /api/assistant/workflows 404
 
 **Solução:**
 - Verifique se `.env.local` está configurado
-- Verifique se o `MACHINA_API_KEY` está correto
+- Verifique se `MACHINA_API_URL`, `MACHINA_AGENT` e uma credencial estao corretos
 - Reinicie o servidor `npm run dev`
 
-### Erro "X-Api-Token required"
+### Erro de autenticacao
 
 **Problema:**
 ```
@@ -87,8 +91,8 @@ POST /api/assistant/workflows 404
 ```
 
 **Solução:**
-- Verifique se a API Key está correta
-- A API espera header `X-Api-Token` (não `Authorization: Bearer`)
+- Para `MACHINA_API_KEY`, verifique se a API key esta correta; o app envia `X-Api-Token`
+- Para `MACHINA_PROJECT_TOKEN`, verifique se o token esta valido; o app envia `X-Project-Token` (nunca `Authorization`)
 
 ### Modal não abre
 
@@ -180,7 +184,7 @@ Você deve ver output NDJSON em tempo real:
 
 ## ✅ Checklist de Teste
 
-- [ ] `.env.local` configurado com `MACHINA_API_KEY`
+- [ ] `.env.local` configurado com `MACHINA_API_URL`, `MACHINA_AGENT` e uma credencial
 - [ ] Servidor rodando (`npm run dev`)
 - [ ] Botão flutuante aparece na tela
 - [ ] Modal abre ao clicar no botão

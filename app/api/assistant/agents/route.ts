@@ -7,11 +7,10 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
+import { MACHINA_API_URL, podAuthHeaders } from '@/lib/pod-auth';
+
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
-
-const MACHINA_API_URL = process.env.MACHINA_API_URL || 'http://127.0.0.1:3001';
-const MACHINA_API_KEY = process.env.MACHINA_API_KEY || '';
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,12 +18,12 @@ export async function POST(req: NextRequest) {
 
     console.log('[Agent Search] Using API URL:', MACHINA_API_URL);
 
-    // Forward request to Machina API with X-Api-Token header
+    // Forward request to Machina API with the configured server-side credential.
     const response = await fetch(`${MACHINA_API_URL}/agent/search`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Api-Token': MACHINA_API_KEY,
+        ...podAuthHeaders(),
       },
       body: JSON.stringify(body),
     });
@@ -70,12 +69,12 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Agent name is required' }, { status: 400 });
     }
 
-    // Forward request to Machina API with X-Api-Token header
+    // Forward request to Machina API with the configured server-side credential.
     const response = await fetch(`${MACHINA_API_URL}/agent/${encodeURIComponent(name)}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'X-Api-Token': MACHINA_API_KEY,
+        ...podAuthHeaders(),
       },
     });
 

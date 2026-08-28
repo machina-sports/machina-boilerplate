@@ -9,11 +9,10 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
+import { MACHINA_API_URL, podAuthHeaders } from '@/lib/pod-auth';
+
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // 5 minutes for streaming
-
-const MACHINA_API_URL = process.env.MACHINA_API_URL || 'http://127.0.0.1:3001';
-const MACHINA_API_KEY = process.env.MACHINA_API_KEY || '';
 
 interface RouteContext {
   params: Promise<{
@@ -28,12 +27,12 @@ export async function POST(req: NextRequest, context: RouteContext) {
 
     console.log(`[Stream Proxy] Starting stream for agent: ${agent}`);
 
-    // Forward request to Machina API streaming endpoint with X-Api-Token header
+    // Forward request with the configured server-side credential.
     const response = await fetch(`${MACHINA_API_URL}/agent/stream/${encodeURIComponent(agent)}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Api-Token': MACHINA_API_KEY,
+        ...podAuthHeaders(),
       },
       body: JSON.stringify(body),
     });

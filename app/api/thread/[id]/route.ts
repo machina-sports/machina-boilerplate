@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export const dynamic = 'force-dynamic';
+import { MACHINA_API_URL, podAuthHeaders } from '@/lib/pod-auth';
 
-const MACHINA_API_URL = process.env.MACHINA_API_URL || 'http://127.0.0.1:3001';
-const MACHINA_API_KEY = process.env.MACHINA_API_KEY || '';
+export const dynamic = 'force-dynamic';
 
 interface RouteContext {
   params: Promise<{
@@ -28,7 +27,7 @@ export async function GET(req: NextRequest, context: RouteContext) {
     const response = await fetch(`${MACHINA_API_URL}/document/${id}`, {
       method: 'GET',
       headers: {
-        'X-Api-Token': MACHINA_API_KEY,
+        ...podAuthHeaders(),
         'Content-Type': 'application/json',
       },
     });
@@ -42,7 +41,7 @@ export async function GET(req: NextRequest, context: RouteContext) {
       const searchResponse = await fetch(`${MACHINA_API_URL}/document/search`, {
         method: 'POST',
         headers: {
-          'X-Api-Token': MACHINA_API_KEY,
+          ...podAuthHeaders(),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({

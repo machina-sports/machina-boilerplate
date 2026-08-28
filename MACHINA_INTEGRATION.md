@@ -111,12 +111,15 @@ Body: {
 Crie `.env.local`:
 
 ```bash
-MACHINA_API_URL=https://api-staging.machina.gg
-MACHINA_API_KEY=KCPN6Y5mBL33QBjBQ7C9DWi2NfLyXjoedS6DXa44Z_VQbL3Sb5El7UgT9EvtVGeo3WVXCDsckPLXeLwOTbkOiQ
+MACHINA_API_URL=https://your-project.org.machina.gg
+MACHINA_AGENT=machina-assistant-executor
 
-NEXT_PUBLIC_MACHINA_API_URL=https://api-staging.machina.gg
-NEXT_PUBLIC_MACHINA_API_KEY=KCPN6Y5mBL33QBjBQ7C9DWi2NfLyXjoedS6DXa44Z_VQbL3Sb5El7UgT9EvtVGeo3WVXCDsckPLXeLwOTbkOiQ
+# Configure uma credencial server-side:
+MACHINA_API_KEY=your_pod_api_key
+# MACHINA_PROJECT_TOKEN=your_project_token
 ```
+
+`MACHINA_API_KEY` usa `X-Api-Token`; `MACHINA_PROJECT_TOKEN` usa `X-Project-Token`. Nenhuma chamada ao pod usa header `Authorization`. Nunca exponha essas credenciais com `NEXT_PUBLIC_`.
 
 ### 2. Buscar Agents
 
@@ -368,7 +371,7 @@ function ObjectRenderer({ objects }: { objects: AssistantObject[] }) {
 
 ### Erro: "Failed to fetch agents"
 
-- Verificar se `MACHINA_API_KEY` está configurada
+- Verificar se `MACHINA_API_URL`, `MACHINA_AGENT` e uma das credenciais server-side estao configuradas
 - Verificar se API está acessível: `curl https://api-staging.machina.gg/system/core-health-check`
 
 ### Stream não funciona

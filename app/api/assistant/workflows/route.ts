@@ -7,22 +7,21 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
+import { MACHINA_API_URL, podAuthHeaders } from '@/lib/pod-auth';
+
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
-
-const MACHINA_API_URL = process.env.MACHINA_API_URL || 'http://127.0.0.1:3001';
-const MACHINA_API_KEY = process.env.MACHINA_API_KEY || '';
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // Forward request to Machina API with X-Api-Token header
+    // Forward request to Machina API with the configured server-side credential.
     const response = await fetch(`${MACHINA_API_URL}/workflow/search`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Api-Token': MACHINA_API_KEY,
+        ...podAuthHeaders(),
       },
       body: JSON.stringify(body),
     });
@@ -72,12 +71,12 @@ export async function GET(req: NextRequest) {
     // Build endpoint path
     const pathParam = id ? `id/${id}` : encodeURIComponent(name!);
 
-    // Forward request to Machina API with X-Api-Token header
+    // Forward request to Machina API with the configured server-side credential.
     const response = await fetch(`${MACHINA_API_URL}/workflow/${pathParam}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'X-Api-Token': MACHINA_API_KEY,
+        ...podAuthHeaders(),
       },
     });
 

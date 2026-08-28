@@ -2,142 +2,69 @@
 
 Utility scripts for the Machina Frontend Boilerplate.
 
-## Available Scripts
+## Production and development mode
 
-### Production/Development Mode
+### `prepare-production.js`
 
-#### `prepare-production.js`
 Prepares the boilerplate for production use by removing example files and optional dependencies.
 
 ```bash
 npm run prepare:production
-npm install  # Update dependencies after
+npm install
 ```
 
-**What it does:**
-- Adds example files to `.gitignore`
-- Removes optional dependencies (`react-markdown`, `react-syntax-highlighter`)
-- Cleans up demo pages and components
+### `prepare-development.js`
 
-#### `prepare-development.js`
-Restores example files and dependencies for development/contribution.
+Restores example files and dependencies for development or contribution.
 
 ```bash
 npm run prepare:development
-npm install  # Restore dependencies
+npm install
 ```
 
-**What it does:**
-- Removes example files from `.gitignore`
-- Restores optional dependencies
-- Re-enables demo pages
+The files and dependencies managed by both commands are declared in `boilerplate-config.json`.
 
----
+## Pod contract verification
 
-### AI Assistant
+### `verify-pod-contract.mjs`
 
-#### `test-gemini.js`
-Tests if the Gemini API key is configured correctly.
+Scans tracked setup and runtime files for removed direct-model setup, checks the required environment variables in supported setup docs, and verifies both pod authentication mappings.
+
+It also enforces build-time credential containment, so a pod credential can never end up in a published image layer. The command fails if any tracked file — including the CI snippets the deploy guide hands a reader — writes a pod credential into a dotenv file or passes it as a Docker build arg, if the `Dockerfile` declares one as a build-time `ARG`/`ENV`, or if `.dockerignore` is missing or stops excluding `.env` and its variants from the build context.
 
 ```bash
-node scripts/test-gemini.js
+npm run verify:pod-contract
 ```
 
-**What it does:**
-- Validates the API key from `.env.local`
-- Sends a test request to Gemini
-- Shows detailed error messages if something is wrong
-- Displays usage information
+### `verify-chat-bridge.mjs`
 
-**Example output (success):**
-```
-🔍 Testing Gemini API Key...
+Starts a local fake Machina pod and the built Next.js app. It checks the shipped `/api/thread/stream` path and the AI SDK-compatible `/api/assistant/chat` path once with each supported credential type.
 
-📝 API Key: AIzaSyBxHb...yadA
-
-⏳ Sending test request...
-
-✅ SUCCESS! API key is working!
-
-📤 Test Response:
-──────────────────────────────────────────────────
-Hello, Machina!
-──────────────────────────────────────────────────
-
-🎉 Your Gemini API is configured correctly!
-```
-
-**Example output (rate limit):**
-```
-❌ ERROR: API key test failed
-
-🚫 Rate Limit Exceeded
-   You have exceeded the API quota.
-   Wait a few minutes and try again.
-   Check usage: https://ai.dev/usage?tab=rate-limit
-```
-
----
-
-## Configuration Files
-
-### `boilerplate-config.json`
-Configuration for the prepare scripts. Defines which files are considered "examples" and which dependencies are optional.
-
-```json
-{
-  "exampleFiles": [
-    "app/page.tsx",
-    "app/docs/",
-    "app/redux-demo/",
-    ...
-  ],
-  "optionalDependencies": [
-    "react-markdown",
-    "react-syntax-highlighter",
-    ...
-  ]
-}
-```
-
----
-
-## Adding New Scripts
-
-To add a new script:
-
-1. Create the script file in `scripts/`
-2. Add execution permissions if needed: `chmod +x scripts/your-script.js`
-3. Add to `package.json` scripts section:
-   ```json
-   {
-     "scripts": {
-       "your-command": "node scripts/your-script.js"
-     }
-   }
-   ```
-4. Document it here in this README
-
----
-
-## Troubleshooting
-
-### "Cannot find module"
-Make sure you've run `npm install` to install all dependencies.
-
-### "Permission denied"
-On Unix-based systems, you may need to add execute permissions:
 ```bash
-chmod +x scripts/your-script.js
+npm run build
+npm run verify:chat-bridge
 ```
 
-### Script not found
-Ensure you're running scripts from the project root directory:
+The command fails unless:
+
+- an API key reaches the pod only as `X-Api-Token`;
+- a project token reaches the pod only as `X-Project-Token`;
+- neither credential mode sends an `Authorization` header;
+- both proxy paths preserve the pod stream;
+- chat messages are mirrored under `context-agent`;
+- `/api/thread/stream` pins the agent target server-side and refuses every workflow target outside `MACHINA_WORKFLOWS`.
+
+That last group is an exploit regression. The route signs its upstream call with the server's pod credential, so the probes assert that traversal attempts (`%2E%2E%2F`, `..%2F`, and their double-encoded form), absolute URLs, and unlisted workflow names are all refused before the pod is contacted, while the pod still receives exactly the allowlisted workflow and the pinned agent.
+
+For manual debugging, the script also supports separate modes:
+
 ```bash
-cd /path/to/machina-frontend-boilerplate
-npm run script-name
+node scripts/verify-chat-bridge.mjs serve
+node scripts/verify-chat-bridge.mjs check
 ```
 
----
+## Adding scripts
 
-For more information about the boilerplate, see the main [README.md](../README.md).
+1. Add the script under `scripts/`.
+2. Register a command in `package.json` when it is part of the supported workflow.
+3. Document its inputs, side effects, and expected result here.

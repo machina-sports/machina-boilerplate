@@ -1,29 +1,78 @@
 import { NextRequest } from 'next/server';
 
+import { MACHINA_API_URL, podAuthHeaders } from '@/lib/pod-auth';
+
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
 
-const MACHINA_API_URL = process.env.MACHINA_API_URL || 'http://127.0.0.1:3001';
-const MACHINA_API_KEY = process.env.MACHINA_API_KEY || '';
+/**
+ * Every upstream call from this route is signed with the server's pod
+ * credential, so the browser must never get to pick which pod endpoint that
+ * credential reaches. Both targets are resolved server-side:
+ *
+ *   type=agent     always MACHINA_AGENT; any ?target= the browser sends is ignored
+ *   type=workflow  must appear verbatim in MACHINA_WORKFLOWS; an unset list
+ *                  closes the workflow path entirely
+ *
+ * Exact allowlist matching already rejects `../` and every encoding of it
+ * (`%2E%2E`, `..%2F`, …) because such a string is not a member of the list. The
+ * resolved name is still shape-checked and percent-encoded before it reaches
+ * the URL, so no name can widen or escape the intended path.
+ */
+const MACHINA_AGENT = process.env.MACHINA_AGENT || 'machina-assistant-executor';
+
+const ALLOWED_WORKFLOWS = new Set(
+  (process.env.MACHINA_WORKFLOWS || '')
+    .split(',')
+    .map((name) => name.trim())
+    .filter(Boolean)
+);
+
+/** A Machina agent/workflow name: no slashes, and never a `.`-leading segment. */
+const SAFE_TARGET_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
+
+function errorResponse(content: string, status: number) {
+  return new Response(JSON.stringify({ type: 'error', content }), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-
-    // Extract target and type from URL parameters
+    // Resolve the target before touching the body: a request that is not
+    // allowed to reach the pod is refused without forwarding anything.
     const { searchParams } = new URL(req.url);
-    const target = searchParams.get('target') || 'machina-assistant-executor';
     const type = searchParams.get('type') || 'agent';
+
+    if (type !== 'agent' && type !== 'workflow') {
+      return errorResponse('Target type must be agent or workflow', 400);
+    }
+
+    let target: string;
+    if (type === 'agent') {
+      target = MACHINA_AGENT;
+    } else {
+      const requestedWorkflow = (searchParams.get('target') || '').trim();
+      if (!ALLOWED_WORKFLOWS.has(requestedWorkflow)) {
+        console.warn('[Thread Stream] Rejected workflow target outside MACHINA_WORKFLOWS');
+        return errorResponse('Workflow target is not allowed', 403);
+      }
+      target = requestedWorkflow;
+    }
+
+    if (!SAFE_TARGET_NAME.test(target)) {
+      console.error('[Thread Stream] Server-configured target is not a usable name');
+      return errorResponse('Server target configuration is invalid', 500);
+    }
+
+    const body = await req.json();
 
     console.log('[Thread Stream] Target:', target, 'Type:', type);
 
-    // Check if this is an agent or workflow request
-    const isAgent = type === 'agent';
-
-    // Forward request to Flask backend streaming endpoint (agent-specific or workflow-specific)
-    const endpoint = isAgent
-      ? `${MACHINA_API_URL}/agent/stream/${target}`
-      : `${MACHINA_API_URL}/workflow/stream/${target}`;
+    // Forward request to Flask backend streaming endpoint (agent-specific or
+    // workflow-specific). The final segment is encoded so it stays one segment.
+    const endpoint = `${MACHINA_API_URL}/${type}/stream/${encodeURIComponent(target)}`;
 
     console.log('[Thread Stream] Calling endpoint:', endpoint);
     console.log('[Thread Stream] Request body:', JSON.stringify(body, null, 2));
@@ -32,7 +81,7 @@ export async function POST(req: NextRequest) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Api-Token': MACHINA_API_KEY,
+        ...podAuthHeaders(),
       },
       body: JSON.stringify(body),
     });
@@ -40,13 +89,7 @@ export async function POST(req: NextRequest) {
     if (!response.ok) {
       const errorText = await response.text();
       console.error('[Thread Stream] Machina API error:', response.status, errorText);
-      return new Response(
-        JSON.stringify({ type: 'error', content: `Backend error: ${response.status}` }),
-        {
-          status: response.status,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+      return errorResponse(`Backend error: ${response.status}`, response.status);
     }
 
     console.log('[Thread Stream] Response received, streaming back to client...');
@@ -95,7 +138,7 @@ export async function POST(req: NextRequest) {
                       JSON.stringify(parsed, null, 2)
                     );
                   }
-                } catch (e) {
+                } catch {
                   // Not JSON, skip logging
                 }
               }
@@ -121,15 +164,6 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error('[Thread Stream] Error:', error);
-    return new Response(
-      JSON.stringify({
-        type: 'error',
-        content: error instanceof Error ? error.message : 'Stream failed',
-      }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+    return errorResponse(error instanceof Error ? error.message : 'Stream failed', 500);
   }
 }
