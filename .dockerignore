@@ -1,0 +1,41 @@
+# The Dockerfile builder stage runs `COPY . .`, so anything left in the build
+# context is baked into an image layer and ships to the registry. Pod
+# credentials are runtime-only — they arrive from the platform secret store
+# (Kubernetes Secret / ECS task definition) when the container starts, never
+# from a file the build can read. Keep every dotenv variant out of the context.
+.env
+.env.*
+*.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Never resurrect a dotenv file with a negation pattern below this line.
+
+# Secrets and keys
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Build output and dependencies — the image builds these itself
+node_modules
+.next
+out
+build
+coverage
+*.tsbuildinfo
+
+# Repository and tooling noise
+.git
+.gitignore
+.github
+.vercel
+.idea
+.vscode
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db

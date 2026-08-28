@@ -3,6 +3,13 @@
  *
  * `run` expects a completed `npm run build`, starts the built app twice, and
  * verifies API-key and project-token authentication independently.
+ *
+ * It also probes the target-selection contract of /api/thread/stream. That
+ * route signs its upstream call with the server's pod credential, so a browser
+ * that could name the target could aim that credential anywhere on the pod.
+ * The probes below assert the server refuses every such attempt -- traversal in
+ * several encodings, and workflows outside the server-side allowlist -- without
+ * the pod ever seeing the request.
  */
 
 import { spawn } from 'node:child_process';
@@ -43,8 +50,11 @@ function createFakePod() {
       return;
     }
 
-    const match = /^\/agent\/stream\/(.+)$/.exec(req.url || '');
+    const match = /^\/(agent|workflow)\/stream\/(.+)$/.exec(req.url || '');
     if (req.method !== 'POST' || !match) {
+      // Anything else arriving here is a leak. Record it so a denial probe can
+      // prove the proxy refused the request instead of merely mangling it.
+      requests.push({ kind: 'unexpected', target: `${req.method} ${req.url}` });
       res.writeHead(404).end();
       return;
     }
@@ -59,7 +69,8 @@ function createFakePod() {
         // The assertions below report malformed input with the captured body.
       }
       requests.push({
-        agent: decodeURIComponent(match[1]),
+        kind: match[1],
+        target: decodeURIComponent(match[2]),
         authorization: req.headers.authorization || null,
         xApiToken: req.headers[API_KEY_HEADER] || null,
         xProjectToken: req.headers[PROJECT_TOKEN_HEADER] || null,
@@ -121,7 +132,9 @@ function assertRequest(request, mode, failures) {
       `${mode}: pod received an Authorization header ${JSON.stringify(request.authorization)}; project JWTs belong in X-Project-Token`
     );
   }
-  if (request.agent !== AGENT) failures.push(`${mode}: pod received agent ${request.agent}`);
+  if (request.kind !== 'agent' || request.target !== AGENT) {
+    failures.push(`${mode}: pod received ${request.kind} target ${request.target}`);
+  }
 
   const messages = request.body?.messages;
   const contextMessages = request.body?.['context-agent']?.messages;
@@ -196,6 +209,132 @@ async function check(mode) {
   console.log(`PASS: ${mode} authenticates both chat proxy paths correctly`);
 }
 
+/**
+ * The workflow name the app under test is configured to allow. Everything else
+ * the browser could name must be refused.
+ */
+const ALLOWED_WORKFLOW = 'test-workflow';
+
+/**
+ * Exploit regressions. Each probe is a request a browser can send today; the
+ * pre-fix route interpolated `target` straight into the pod path, so the first
+ * three reached `/agent/stream/...` (or any other pod endpoint) carrying the
+ * server's credential, and the rest reached an arbitrary workflow.
+ */
+const DENIED_TARGET_PROBES = [
+  {
+    name: 'percent-encoded traversal onto the agent stream',
+    query: `type=workflow&target=%2E%2E%2F%2E%2E%2Fagent%2Fstream%2F${AGENT}`,
+    status: 403,
+  },
+  {
+    name: 'mixed-encoding traversal',
+    query: `type=workflow&target=..%2F..%2Fagent%2Fstream%2F${AGENT}`,
+    status: 403,
+  },
+  {
+    name: 'double-encoded traversal',
+    query: 'type=workflow&target=%252E%252E%252F%252E%252E%252Fadmin',
+    status: 403,
+  },
+  {
+    name: 'traversal with a trailing segment',
+    query: 'type=workflow&target=%2E%2E%2F%2E%2E%2F%2E%2E%2Fadmin%2Fkeys',
+    status: 403,
+  },
+  {
+    name: 'arbitrary workflow outside the allowlist',
+    query: 'type=workflow&target=some-other-workflow',
+    status: 403,
+  },
+  {
+    name: 'absolute URL as the target',
+    query: `type=workflow&target=${encodeURIComponent('https://attacker.example/steal')}`,
+    status: 403,
+  },
+  { name: 'workflow target omitted', query: 'type=workflow', status: 403 },
+  { name: 'unknown target type', query: 'type=%2E%2E%2Fagent&target=anything', status: 400 },
+];
+
+/** The two targets the server does choose, proving the route still works. */
+const ALLOWED_TARGET_PROBES = [
+  {
+    name: 'allowlisted workflow',
+    query: `type=workflow&target=${ALLOWED_WORKFLOW}`,
+    expected: { kind: 'workflow', target: ALLOWED_WORKFLOW },
+  },
+  {
+    name: 'agent path ignores a browser-supplied traversal target',
+    query: `type=agent&target=%2E%2E%2F%2E%2E%2Fworkflow%2Fstream%2F${ALLOWED_WORKFLOW}`,
+    expected: { kind: 'agent', target: AGENT },
+  },
+];
+
+function streamRequest(query, payload) {
+  return fetch(`${APP_URL}/api/thread/stream?${query}`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: payload,
+  });
+}
+
+async function seenByPod() {
+  return (await fetch(`http://127.0.0.1:${POD_PORT}/__seen`)).json();
+}
+
+async function checkTargetPinning(mode) {
+  await resetFakePod();
+  const message = { role: 'user', content: 'Say hello through the pod.' };
+  const payload = JSON.stringify({ messages: [message], 'context-agent': { messages: [message] } });
+  const failures = [];
+
+  for (const probe of DENIED_TARGET_PROBES) {
+    const response = await streamRequest(probe.query, payload);
+    const text = await response.text();
+    if (response.status !== probe.status) {
+      failures.push(
+        `${mode}: ${probe.name} answered ${response.status}, expected ${probe.status}: ${text.slice(0, 200)}`
+      );
+    }
+  }
+
+  const leaked = await seenByPod();
+  if (!Array.isArray(leaked) || leaked.length > 0) {
+    failures.push(
+      `${mode}: refused targets still reached the pod: ${JSON.stringify(
+        (leaked || []).map((request) => `${request.kind}:${request.target}`)
+      )}`
+    );
+  }
+
+  await resetFakePod();
+  for (const probe of ALLOWED_TARGET_PROBES) {
+    const response = await streamRequest(probe.query, payload);
+    const text = await response.text();
+    if (response.status !== 200) {
+      failures.push(`${mode}: ${probe.name} answered ${response.status}: ${text.slice(0, 200)}`);
+    }
+  }
+
+  const reached = await seenByPod();
+  const actual = (Array.isArray(reached) ? reached : []).map(
+    (request) => `${request.kind}:${request.target}`
+  );
+  const expected = ALLOWED_TARGET_PROBES.map(
+    (probe) => `${probe.expected.kind}:${probe.expected.target}`
+  );
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+    failures.push(
+      `${mode}: pod saw ${JSON.stringify(actual)}, expected ${JSON.stringify(expected)}`
+    );
+  }
+
+  if (failures.length > 0) throw new Error(failures.join('\n  - '));
+  console.log(
+    `PASS: ${mode} pins the agent target and refuses ${DENIED_TARGET_PROBES.length} non-allowlisted workflow targets`
+  );
+}
+
 function startApp(mode) {
   const env = { ...process.env };
   delete env.MACHINA_API_KEY;
@@ -203,6 +342,7 @@ function startApp(mode) {
   Object.assign(env, {
     MACHINA_API_URL: `http://127.0.0.1:${POD_PORT}`,
     MACHINA_AGENT: AGENT,
+    MACHINA_WORKFLOWS: ALLOWED_WORKFLOW,
     PORT: String(APP_PORT),
   });
   if (mode === 'project-token') env.MACHINA_PROJECT_TOKEN = PROJECT_TOKEN;
@@ -261,6 +401,7 @@ async function run() {
       try {
         await waitForApp(processInfo);
         await check(mode);
+        await checkTargetPinning(mode);
       } finally {
         await stopApp(processInfo.child);
       }
@@ -268,7 +409,9 @@ async function run() {
   } finally {
     await close(server);
   }
-  console.log('PASS: chat round-trips the fake pod with both credential types');
+  console.log(
+    'PASS: chat round-trips the fake pod with both credential types and no browser-chosen target reaches it'
+  );
 }
 
 const mode = process.argv[2] || 'run';
@@ -278,6 +421,7 @@ if (mode === 'serve') {
   console.log(`fake pod listening on http://127.0.0.1:${POD_PORT}`);
 } else if (mode === 'check') {
   await check(process.env.EXPECTED_AUTH_MODE || 'api-key');
+  await checkTargetPinning(process.env.EXPECTED_AUTH_MODE || 'api-key');
 } else if (mode === 'run') {
   await run();
 } else {

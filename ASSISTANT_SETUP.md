@@ -51,6 +51,19 @@ Set `MACHINA_AGENT` to the name of an agent installed in the selected project po
 
 The sidebar can also list agents and workflows through the server-side routes under `/api/assistant/*`.
 
+## Allow a workflow to be streamed
+
+`/api/thread/stream` signs every upstream call with the server's pod credential, so the target it reaches is decided on the server, never by the browser:
+
+- `type=agent` always streams `MACHINA_AGENT`. A `?target=` sent by the browser is ignored.
+- `type=workflow` streams only a name listed verbatim in `MACHINA_WORKFLOWS`, a comma-separated allowlist. An unset or empty list closes the workflow path, and any other name is refused with `403`.
+
+```env
+MACHINA_WORKFLOWS=match-recap,player-profile
+```
+
+Because matching is exact, a traversal attempt such as `../../agent/stream/other` — in any encoding, including `%2E%2E%2F` — is simply not a member of the list and is refused before the pod is contacted. The allowed name is then percent-encoded into the final path segment, so it can never widen the upstream path.
+
 ## Verification
 
 After `npm run build`, run the deterministic local contract checks:

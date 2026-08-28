@@ -8,6 +8,17 @@ The same repository deploys to AWS ECS or Azure AKS. Select the provider with th
 - Variable `MACHINA_ORG_ID`: organization whose Machina pod is deployed.
 - Runtime variables/secrets in the ECS task definition or AKS Deployment: `MACHINA_API_URL`, `MACHINA_AGENT`, and either `MACHINA_API_KEY` or `MACHINA_PROJECT_TOKEN`.
 
+## Credentials are injected at runtime, never at build time
+
+The image is built from a context that includes the whole repository (`COPY . .`), so anything a build step writes to disk ends up in a published image layer. A pod credential in that layer is readable by anyone who can pull the image.
+
+- No build step writes `MACHINA_API_KEY` or `MACHINA_PROJECT_TOKEN` to a `.env` file, and neither is a Docker build arg. `.dockerignore` excludes `.env` and every variant so a stray local file cannot enter the context either.
+- `MACHINA_API_URL`, `MACHINA_AGENT`, and either `MACHINA_API_KEY` or `MACHINA_PROJECT_TOKEN` reach the process when the container starts: on AKS through `secretKeyRef` entries against the `machina-app-secrets` Secret (see `k8s/deployment.yaml`), on ECS through the task definition's `secrets` block backed by Secrets Manager or SSM Parameter Store.
+- Only `NEXT_PUBLIC_*` values are build args, because Next.js inlines them into the client bundle. Never give a pod credential a `NEXT_PUBLIC_` prefix — that publishes it to every browser.
+- Rotate the credential in the secret store and restart the workload; no rebuild is needed.
+
+`npm run verify:pod-contract` fails the build if a tracked file writes a pod credential into a dotenv file or passes one as a build arg, or if `.dockerignore` stops excluding dotenv files.
+
 ## AWS ECS variables
 
 - `AWS_DEPLOY_ROLE_ARN`, `AWS_REGION`, `AWS_ECR_REPOSITORY`

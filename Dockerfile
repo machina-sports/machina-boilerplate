@@ -15,6 +15,17 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Only public, non-secret values may enter the build. Next.js inlines
+# NEXT_PUBLIC_* into the client bundle, so those must be present here; pod
+# credentials are runtime-only and are never a build arg, never written to a
+# dotenv file, and never copied in (see .dockerignore).
+ARG NEXT_PUBLIC_APP_NAME
+ARG NEXT_PUBLIC_BRAND
+ARG NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_PUBLIC_APP_NAME=$NEXT_PUBLIC_APP_NAME
+ENV NEXT_PUBLIC_BRAND=$NEXT_PUBLIC_BRAND
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
