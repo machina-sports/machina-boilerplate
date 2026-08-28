@@ -1,12 +1,10 @@
 /**
  * API Route: /api/assistant/chat
  *
- * The bridge between the shipped chat UI and the Machina pod — the single
- * reason this boilerplate exists.
+ * AI SDK-compatible bridge for programmatic clients of the Machina pod.
  *
- * The UI speaks the AI SDK UI-message-stream protocol (assistant-ui's
- * AssistantChatTransport, hooks/runtime.tsx). The pod speaks NDJSON from
- * `POST /agent/stream/{agent}` (client-api): lines shaped
+ * The route returns the AI SDK UI-message-stream protocol. The pod speaks
+ * NDJSON from `POST /agent/stream/{agent}` (client-api): lines shaped
  * `{type, content, metadata, timestamp, chunk_index}` with `type` in
  * start | workflow_* | content | done | error. This route translates one
  * into the other, so the scaffold's chat round-trips through the Machina
@@ -16,8 +14,8 @@
  * - The agent is chosen by the SERVER (`MACHINA_AGENT`), never by the
  *   client payload — a browser must not be able to point the chat at an
  *   arbitrary agent on the pod.
- * - The pod credential stays server-side (`MACHINA_API_KEY`, sent as
- *   X-Api-Token). Nothing NEXT_PUBLIC_ is involved in the chat path.
+ * - The pod credential stays server-side. API keys use X-Api-Token and
+ *   project tokens use Authorization: Bearer. Nothing NEXT_PUBLIC_ is used.
  *
  * This route previously called a hosted LLM directly, which silently
  * required a provider key the template never declared — and meant the

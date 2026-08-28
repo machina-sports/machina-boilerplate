@@ -1,38 +1,35 @@
 # Environment Setup
 
-## Variáveis de Ambiente Necessárias
+## Variaveis obrigatorias
 
-Crie um arquivo `.env.local` na raiz do projeto com as seguintes variáveis:
-
-```bash
-# Machina API Configuration (Server-side only)
-MACHINA_API_URL=https://api-staging.machina.gg
-MACHINA_API_KEY=KCPN6Y5mBL33QBjBQ7C9DWi2NfLyXjoedS6DXa44Z_VQbL3Sb5El7UgT9EvtVGeo3WVXCDsckPLXeLwOTbkOiQ
-```
-
-## Para Produção
+Copie `.env.example` para `.env.local` e configure o pod, o agente e uma credencial server-side:
 
 ```bash
-# Machina API Configuration (Production)
-MACHINA_API_URL=https://api.machina.gg
-MACHINA_API_KEY=your_production_api_key_here
+MACHINA_API_URL=https://your-project.org.machina.gg
+MACHINA_AGENT=machina-assistant-executor
+
+# Use uma API key do pod:
+MACHINA_API_KEY=your_pod_api_key
+
+# Ou use o project token gerado por `machina login`:
+# MACHINA_PROJECT_TOKEN=your_project_token
 ```
 
-## Notas Importantes
+Use apenas uma credencial. Se ambas estiverem configuradas, `MACHINA_PROJECT_TOKEN` tem precedencia.
 
-1. **Segurança**: As variáveis sem `NEXT_PUBLIC_` são apenas server-side e não são expostas ao cliente
-2. **API Key**: A API Key fornecida é para staging. Para produção, use uma key de produção
-3. **Autenticação**: Este app usa `X-Api-Token` header para autenticação (não Authorization Bearer)
-4. **Headers**: A Machina API espera `X-Api-Token` (não `Authorization: Bearer`)
+## Contrato de autenticacao
 
-## Testando a Configuração
+- `MACHINA_API_KEY` e enviado no header `X-Api-Token`.
+- `MACHINA_PROJECT_TOKEN` e enviado no header `Authorization: Bearer <token>`.
+- Nenhuma credencial pode usar o prefixo `NEXT_PUBLIC_`.
+- Use valores e credenciais separados para staging e producao.
 
-Após configurar as variáveis, reinicie o servidor Next.js:
+## Testando a configuracao
+
+Reinicie o servidor apos alterar `.env.local`:
 
 ```bash
 npm run dev
 ```
 
-Verifique os logs do console para confirmar que a API está sendo acessada corretamente:
-
-- `[Agent Search] Using API URL: https://api-staging.machina.gg`
+Abra `/api/health` e confirme que `podConfigured` e `true`. Depois envie uma mensagem em `/chat` e confira os logs do servidor Next.js se o pod rejeitar a requisicao.

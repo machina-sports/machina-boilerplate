@@ -4,7 +4,7 @@
  * Two credential kinds exist and they travel under DIFFERENT headers:
  *
  *   MACHINA_API_KEY        a pod API key            → X-Api-Token
- *   MACHINA_PROJECT_TOKEN  a project JWT (the kind  → X-Project-Token
+ *   MACHINA_PROJECT_TOKEN  a project JWT (the kind  → Authorization: Bearer
  *                          `machina login` mints)
  *
  * Sending a project JWT under X-Api-Token earns a misleading AUTH-015
@@ -27,6 +27,6 @@ export function podConfigured(): boolean {
 /** Auth header for pod requests. The project token wins when both are set —
  *  it is the more specific credential. */
 export function podAuthHeaders(): Record<string, string> {
-  if (MACHINA_PROJECT_TOKEN) return { 'X-Project-Token': MACHINA_PROJECT_TOKEN };
+  if (MACHINA_PROJECT_TOKEN) return { Authorization: `Bearer ${MACHINA_PROJECT_TOKEN}` };
   return { 'X-Api-Token': MACHINA_API_KEY };
 }

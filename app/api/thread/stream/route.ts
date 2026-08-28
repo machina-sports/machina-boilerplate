@@ -5,14 +5,27 @@ import { MACHINA_API_URL, podAuthHeaders } from '@/lib/pod-auth';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
 
+const MACHINA_AGENT = process.env.MACHINA_AGENT || 'machina-assistant-executor';
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
     // Extract target and type from URL parameters
     const { searchParams } = new URL(req.url);
-    const target = searchParams.get('target') || 'machina-assistant-executor';
+    const requestedTarget = searchParams.get('target');
     const type = searchParams.get('type') || 'agent';
+    const target = type === 'agent' ? MACHINA_AGENT : requestedTarget;
+
+    if (!target) {
+      return new Response(
+        JSON.stringify({ type: 'error', content: 'Workflow target is required' }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
 
     console.log('[Thread Stream] Target:', target, 'Type:', type);
 

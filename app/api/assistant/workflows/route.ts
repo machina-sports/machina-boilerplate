@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // Forward request to Machina API with X-Api-Token header
+    // Forward request to Machina API with the configured server-side credential.
     const response = await fetch(`${MACHINA_API_URL}/workflow/search`, {
       method: 'POST',
       headers: {
@@ -71,7 +71,7 @@ export async function GET(req: NextRequest) {
     // Build endpoint path
     const pathParam = id ? `id/${id}` : encodeURIComponent(name!);
 
-    // Forward request to Machina API with X-Api-Token header
+    // Forward request to Machina API with the configured server-side credential.
     const response = await fetch(`${MACHINA_API_URL}/workflow/${pathParam}`, {
       method: 'GET',
       headers: {

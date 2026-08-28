@@ -27,7 +27,7 @@ export async function POST(req: NextRequest, context: RouteContext) {
 
     console.log(`[Stream Proxy] Starting stream for agent: ${agent}`);
 
-    // Forward request to Machina API streaming endpoint with X-Api-Token header
+    // Forward request with the configured server-side credential.
     const response = await fetch(`${MACHINA_API_URL}/agent/stream/${encodeURIComponent(agent)}`, {
       method: 'POST',
       headers: {

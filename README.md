@@ -10,7 +10,7 @@ npm install
 npm run dev
 ```
 
-Set `MACHINA_API_URL` and `MACHINA_API_KEY` to the selected project's Client API. The key is only read by server routes and must never use a `NEXT_PUBLIC_` prefix.
+Set `MACHINA_API_URL`, `MACHINA_AGENT`, and either `MACHINA_API_KEY` or `MACHINA_PROJECT_TOKEN` for the selected project pod. Credentials are only read by server routes and must never use a `NEXT_PUBLIC_` prefix.
 
 Open [http://localhost:3000](http://localhost:3000). `/` redirects to the chat and `/api/health` reports whether pod credentials are configured without revealing them.
 
@@ -18,7 +18,7 @@ Open [http://localhost:3000](http://localhost:3000). `/` redirects to the chat a
 
 ```text
 Browser -> Next.js server routes -> Machina project pod
-             (API key stays here)      -> agents/workflows/data
+             (credential stays here)   -> agents/workflows/data
 ```
 
 The starter includes:

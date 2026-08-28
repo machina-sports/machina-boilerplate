@@ -1,12 +1,10 @@
 import { NextResponse, NextRequest } from 'next/server';
 
-import { podAuthHeaders } from '@/lib/pod-auth';
+import { MACHINA_API_URL, podAuthHeaders } from '@/lib/pod-auth';
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const id = searchParams.get('id');
-  const api_url = process.env.MACHINA_CLIENT_URL;
-
   if (!id) {
     return NextResponse.json({ error: 'Article ID is required' }, { status: 400 });
   }
@@ -16,7 +14,7 @@ export async function GET(req: NextRequest) {
     const isObjectId = /^[0-9a-f]{24}$/i.test(id);
     const filters = isObjectId ? { _id: id } : { 'value.slug': id };
 
-    const response = await fetch(`${api_url}/document/search`, {
+    const response = await fetch(`${MACHINA_API_URL}/document/search`, {
       method: 'POST',
       headers: {
         ...podAuthHeaders(),

@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 
     console.log('[Agent Search] Using API URL:', MACHINA_API_URL);
 
-    // Forward request to Machina API with X-Api-Token header
+    // Forward request to Machina API with the configured server-side credential.
     const response = await fetch(`${MACHINA_API_URL}/agent/search`, {
       method: 'POST',
       headers: {
@@ -69,7 +69,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Agent name is required' }, { status: 400 });
     }
 
-    // Forward request to Machina API with X-Api-Token header
+    // Forward request to Machina API with the configured server-side credential.
     const response = await fetch(`${MACHINA_API_URL}/agent/${encodeURIComponent(name)}`, {
       method: 'GET',
       headers: {

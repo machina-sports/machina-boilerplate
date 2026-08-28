@@ -37,8 +37,10 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "MACHINA_API_KEY=\${{ vars.MACHINA_API_KEY }}" >> .env
-          echo "MACHINA_CLIENT_URL=\${{ vars.MACHINA_CLIENT_URL }}" >> .env
+          echo "MACHINA_API_KEY=\${{ secrets.MACHINA_API_KEY }}" >> .env
+          echo "MACHINA_PROJECT_TOKEN=\${{ secrets.MACHINA_PROJECT_TOKEN }}" >> .env
+          echo "MACHINA_API_URL=\${{ vars.MACHINA_API_URL }}" >> .env
+          echo "MACHINA_AGENT=\${{ vars.MACHINA_AGENT }}" >> .env
           echo "NEXT_PUBLIC_BRAND=\${{ vars.NEXT_PUBLIC_BRAND }}" >> .env
           echo "NEXT_PUBLIC_APP_NAME=\${{ vars.NEXT_PUBLIC_APP_NAME }}" >> .env
           echo "NEXT_PUBLIC_API_BASE_URL=\${{ vars.NEXT_PUBLIC_API_BASE_URL }}" >> .env
@@ -206,7 +208,7 @@ const DeployPage = () => {
                 <li>Azure credentials (AZURE_CREDENTIALS)</li>
                 <li>Docker registry credentials (DOCKER_USERNAME, DOCKER_PASSWORD)</li>
                 <li>Registry URL (REGISTRY_URL)</li>
-                <li>API credentials (MACHINA_API_KEY, MACHINA_CLIENT_URL)</li>
+                <li>Machina pod URL, agent, and either MACHINA_API_KEY or MACHINA_PROJECT_TOKEN</li>
               </ul>
             </div>
           </div>
@@ -233,6 +235,8 @@ const DeployPage = () => {
                   REGISTRY_URL
                   <br />
                   AZURE_CREDENTIALS
+                  <br />
+                  MACHINA_API_KEY or MACHINA_PROJECT_TOKEN
                 </code>
               </div>
             </div>
@@ -242,9 +246,9 @@ const DeployPage = () => {
               </h4>
               <div className="rounded-md bg-zinc-50 p-3 dark:bg-zinc-800">
                 <code className="block text-xs text-zinc-800 dark:text-zinc-200">
-                  MACHINA_API_KEY
+                  MACHINA_API_URL
                   <br />
-                  MACHINA_CLIENT_URL
+                  MACHINA_AGENT
                   <br />
                   NEXT_PUBLIC_BRAND
                   <br />
@@ -309,8 +313,10 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "MACHINA_API_KEY=${'{'}{'{'}vars.MACHINA_API_KEY{'}'}{'}'}" >> .env
-          echo "MACHINA_CLIENT_URL=${'{'}{'{'}vars.MACHINA_CLIENT_URL{'}'}{'}'}" >> .env
+          echo "MACHINA_API_KEY=${'{'}{'{'}secrets.MACHINA_API_KEY{'}'}{'}'}" >> .env
+          echo "MACHINA_PROJECT_TOKEN=${'{'}{'{'}secrets.MACHINA_PROJECT_TOKEN{'}'}{'}'}" >> .env
+          echo "MACHINA_API_URL=${'{'}{'{'}vars.MACHINA_API_URL{'}'}{'}'}" >> .env
+          echo "MACHINA_AGENT=${'{'}{'{'}vars.MACHINA_AGENT{'}'}{'}'}" >> .env
           echo "NEXT_PUBLIC_BRAND=${'{'}{'{'}vars.NEXT_PUBLIC_BRAND{'}'}{'}'}" >> .env
           echo "NEXT_PUBLIC_APP_NAME=${'{'}{'{'}vars.NEXT_PUBLIC_APP_NAME{'}'}{'}'}" >> .env
           echo "NEXT_PUBLIC_API_BASE_URL=${'{'}{'{'}vars.NEXT_PUBLIC_API_BASE_URL{'}'}{'}'}" >> .env

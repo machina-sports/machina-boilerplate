@@ -175,11 +175,12 @@ NEXT_PUBLIC_BRAND=default
 
 # API Configuration
 NEXT_PUBLIC_API_BASE_URL=http://localhost:3000/api
-MACHINA_API_KEY=your_key
-MACHINA_CLIENT_URL=your_url
+MACHINA_API_URL=https://your-project.org.machina.gg
+MACHINA_AGENT=machina-assistant-executor
 
-# AI Assistant (Optional)
-GEMINI_API_KEY=your_gemini_key
+# Use one server-only credential
+MACHINA_API_KEY=your_pod_api_key
+# MACHINA_PROJECT_TOKEN=your_project_token
 \`\`\`
 
 # Best Practices
@@ -217,4 +218,3 @@ You are in "Deployment Guide" mode. Help with deployment configuration, CI/CD se
 Docker, Kubernetes, and environment configuration. Be specific about steps and commands.
 `,
 };
-

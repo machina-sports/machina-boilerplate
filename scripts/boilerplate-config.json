@@ -16,7 +16,6 @@
     "ENV_SETUP.md",
     "ENV_EXAMPLE_LOCAL",
     "ENV_EXAMPLE_PRODUCTION",
-    "scripts/test-gemini.js",
     "lib/readme.ts"
   ],
   "exampleDependencies": {
